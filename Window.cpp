@@ -54,6 +54,14 @@ Window::Window()
 
 	isRunning = false;
 	flags = 0;
+
+	spriteTexture = nullptr;
+
+	srcRectangle = SDL_Rect();
+	destRectangle = SDL_Rect();
+
+	tempSurface = nullptr;
+
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -65,6 +73,13 @@ Window::~Window()
 	isRunning = false;
 
 	flags = 0;
+
+	spriteTexture = nullptr;
+
+	srcRectangle = SDL_Rect();
+	destRectangle = SDL_Rect();
+
+	tempSurface = nullptr;
 }
 
 bool Window::InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen)
@@ -91,6 +106,18 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 		{
 			gameRenderer = SDL_CreateRenderer(gameWindow, -1, 0);
 
+			// Load the bmp file using the SDL's surface object
+			tempSurface = SDL_LoadBMP("Sprites/Rider.bmp");
+
+			// Use the sprite texture to render from the SDL's surface
+			spriteTexture = SDL_CreateTextureFromSurface(gameRenderer, tempSurface);
+
+			// Free the surface to release any used memory
+			SDL_FreeSurface(tempSurface);
+
+			// Get the dimensions of the texture here and use it to set the width and height of the image
+			SDL_QueryTexture(spriteTexture, NULL, NULL, &srcRectangle.w, &srcRectangle.h);
+
 			// If the game renderer is successful
 			if (gameRenderer != 0)
 			{
@@ -100,7 +127,7 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				and the alpha value (transparent-opaque). */
 
 				// Make the SDL window red
-				SDL_SetRenderDrawColor(gameRenderer, 200, 0, 0, 255);
+				SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
 			}
 
 			else
@@ -135,8 +162,18 @@ void Window::RenderSDL()
 		// Call the handle events function whenever SDL window is running
 		HandleEvents();
 
-		// Clear the window to black
+		// By setting the destination rectangle, the SDL renderer will know where to draw the image inside the window
+		destRectangle.x = srcRectangle.x = 0;
+		destRectangle.y = srcRectangle.y = 0;
+
+		destRectangle.w = srcRectangle.w;
+		destRectangle.h = srcRectangle.h;
+
+		// Clear the window with the set drawing color
 		SDL_RenderClear(gameRenderer);
+
+		// Render the loaded texture to the window
+		SDL_RenderCopy(gameRenderer, spriteTexture, &srcRectangle, &destRectangle);
 
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
