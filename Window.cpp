@@ -107,7 +107,8 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 			gameRenderer = SDL_CreateRenderer(gameWindow, -1, 0);
 
 			// Load the bmp file using the SDL's surface object
-			tempSurface = SDL_LoadBMP("Sprites/Rider.bmp");
+			//tempSurface = SDL_LoadBMP("Sprites/Rider.bmp");
+			tempSurface = SDL_LoadBMP("Sprites/Animate.bmp");
 
 			// Use the sprite texture to render from the SDL's surface
 			spriteTexture = SDL_CreateTextureFromSurface(gameRenderer, tempSurface);
@@ -116,7 +117,7 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 			SDL_FreeSurface(tempSurface);
 
 			// Get the dimensions of the texture here and use it to set the width and height of the image
-			SDL_QueryTexture(spriteTexture, NULL, NULL, &srcRectangle.w, &srcRectangle.h);
+			//SDL_QueryTexture(spriteTexture, NULL, NULL, &srcRectangle.w, &srcRectangle.h);
 
 			// If the game renderer is successful
 			if (gameRenderer != 0)
@@ -162,8 +163,22 @@ void Window::RenderSDL()
 		// Call the handle events function whenever SDL window is running
 		HandleEvents();
 
+		/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
+		the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
+		the amount of the animation frames in the sprite sheet */
+
+		// By setting the source rectangle, the SDL renderer will know which section of the image to draw to the renderer
+		srcRectangle.x = 100 * static_cast<int>((SDL_GetTicks() / 100) % 6);
+		//srcRectangle.y = 50;
+		srcRectangle.w = 100;
+		srcRectangle.h = 82;
+
+		// Determines the location that we want the pixels inside the source rectangle to be copied to
+		//destRectangle.x = 100;
+		//destRectangle.y = 100;
+
 		// By setting the destination rectangle, the SDL renderer will know where to draw the image inside the window
-		destRectangle.x = srcRectangle.x = 0;
+		destRectangle.x = 0;
 		destRectangle.y = srcRectangle.y = 0;
 
 		destRectangle.w = srcRectangle.w;
@@ -174,6 +189,8 @@ void Window::RenderSDL()
 
 		// Render the loaded texture to the window
 		SDL_RenderCopy(gameRenderer, spriteTexture, &srcRectangle, &destRectangle);
+
+		//SDL_RenderCopy(gameRenderer, spriteTexture, 0, 0); // Render the entire texture
 
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
