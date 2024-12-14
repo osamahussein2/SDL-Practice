@@ -47,6 +47,15 @@
 
 */
 
+/*
+	The available values for the SDL_RendererFlip enumerated type include:
+
+	SDL_FLIP_NONE - no flipping
+	SDL_FLIP_HORIZONTAL - flip the texture horizontally
+	SDL_FLIP_VERTICAL - flip the texture vertically
+
+*/
+
 Window::Window()
 {
 	gameWindow = 0;
@@ -55,13 +64,7 @@ Window::Window()
 	isRunning = false;
 	flags = 0;
 
-	spriteTexture = nullptr;
-
-	srcRectangle = SDL_Rect();
-	destRectangle = SDL_Rect();
-
-	tempSurface = nullptr;
-
+	currentFrame = 0;
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -74,12 +77,7 @@ Window::~Window()
 
 	flags = 0;
 
-	spriteTexture = nullptr;
-
-	srcRectangle = SDL_Rect();
-	destRectangle = SDL_Rect();
-
-	tempSurface = nullptr;
+	currentFrame = 0;
 }
 
 bool Window::InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen)
@@ -106,19 +104,6 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 		{
 			gameRenderer = SDL_CreateRenderer(gameWindow, -1, 0);
 
-			// Load the bmp file using the SDL's surface object
-			//tempSurface = SDL_LoadBMP("Sprites/Rider.bmp");
-			tempSurface = SDL_LoadBMP("Sprites/Animate.bmp");
-
-			// Use the sprite texture to render from the SDL's surface
-			spriteTexture = SDL_CreateTextureFromSurface(gameRenderer, tempSurface);
-
-			// Free the surface to release any used memory
-			SDL_FreeSurface(tempSurface);
-
-			// Get the dimensions of the texture here and use it to set the width and height of the image
-			//SDL_QueryTexture(spriteTexture, NULL, NULL, &srcRectangle.w, &srcRectangle.h);
-
 			// If the game renderer is successful
 			if (gameRenderer != 0)
 			{
@@ -128,7 +113,10 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				and the alpha value (transparent-opaque). */
 
 				// Make the SDL window red
-				SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
+				SDL_SetRenderDrawColor(gameRenderer, 255, 0, 0, 255);
+
+				TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png", 
+					"Animate", gameRenderer);
 			}
 
 			else
@@ -163,34 +151,17 @@ void Window::RenderSDL()
 		// Call the handle events function whenever SDL window is running
 		HandleEvents();
 
-		/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
-		the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
-		the amount of the animation frames in the sprite sheet */
-
-		// By setting the source rectangle, the SDL renderer will know which section of the image to draw to the renderer
-		srcRectangle.x = 100 * static_cast<int>((SDL_GetTicks() / 100) % 6);
-		//srcRectangle.y = 50;
-		srcRectangle.w = 100;
-		srcRectangle.h = 82;
-
-		// Determines the location that we want the pixels inside the source rectangle to be copied to
-		//destRectangle.x = 100;
-		//destRectangle.y = 100;
-
-		// By setting the destination rectangle, the SDL renderer will know where to draw the image inside the window
-		destRectangle.x = 0;
-		destRectangle.y = srcRectangle.y = 0;
-
-		destRectangle.w = srcRectangle.w;
-		destRectangle.h = srcRectangle.h;
-
 		// Clear the window with the set drawing color
 		SDL_RenderClear(gameRenderer);
 
-		// Render the loaded texture to the window
-		SDL_RenderCopy(gameRenderer, spriteTexture, &srcRectangle, &destRectangle);
+		/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
+		the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
+		the amount of the animation frames in the sprite sheet */
+		currentFrame = static_cast<int>((SDL_GetTicks() / 100) % 6);
 
-		//SDL_RenderCopy(gameRenderer, spriteTexture, 0, 0); // Render the entire texture
+		TheTextureManager::TextureManagerInstance()->DrawTexture("Animate", 0, 0, 100, 82, gameRenderer, SDL_FLIP_NONE);
+		TheTextureManager::TextureManagerInstance()->DrawFrame("Animate", 100, 100, 100, 82, 0, currentFrame, 
+			gameRenderer, SDL_FLIP_NONE);
 
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
@@ -204,6 +175,8 @@ void Window::RenderSDL()
 		// Destroy both the window and renderer once isRunning is false
 		SDL_DestroyWindow(gameWindow);
 		SDL_DestroyRenderer(gameRenderer);
+
+		TheTextureManager::TextureManagerInstance()->~TextureManager();
 
 		// Quit SDL when isRunning returns false
 		SDL_Quit();

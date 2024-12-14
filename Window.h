@@ -6,8 +6,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <Windows.h>
+
+#include "TextureManager.h"
 
 using namespace std;
 
@@ -25,15 +28,12 @@ private:
 	SDL_Window* gameWindow;
 	SDL_Renderer* gameRenderer;
 
-	SDL_Texture* spriteTexture;
-
-	SDL_Rect srcRectangle; // first rectangle (the source rectangle)
-	SDL_Rect destRectangle; // another rectangle (the destination rectangle)
-
-	SDL_Surface* tempSurface;
-
 	bool isRunning;
 	int flags;
+
+	int currentFrame;
+
+	typedef TextureManager TheTextureManager;
 };
 
 #endif /* defined(WINDOW_H) */
