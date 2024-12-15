@@ -9,8 +9,8 @@ TextureManager::~TextureManager()
 
 	textureLoaded = false;
 
-	srcRectangle = SDL_Rect();
-	destRectangle = SDL_Rect();
+	DeleteObject(&srcRectangle);
+	DeleteObject(&destRectangle);
 }
 
 TextureManager* TextureManager::TextureManagerInstance()

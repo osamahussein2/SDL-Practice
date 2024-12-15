@@ -1,4 +1,6 @@
 #include "Window.h"
+#include "Player.h"
+#include "Enemy.h"
 
 /* SDL initialization flags:
 
@@ -56,6 +58,9 @@
 
 */
 
+// Define the static instance
+Window* Window::windowInstance = 0;
+
 Window::Window()
 {
 	gameWindow = 0;
@@ -70,14 +75,20 @@ Window::Window()
 // Use this deconstructor to tell SDL when we should close the window by itself
 Window::~Window()
 {
-	gameWindow = 0;
-	gameRenderer = 0;
-
-	isRunning = false;
-
 	flags = 0;
 
 	currentFrame = 0;
+}
+
+Window* Window::WindowInstance()
+{
+	if (windowInstance == 0)
+	{
+		windowInstance = new Window();
+		return windowInstance;
+	}
+
+	return windowInstance;
 }
 
 bool Window::InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen)
@@ -115,8 +126,12 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				// Make the SDL window red
 				SDL_SetRenderDrawColor(gameRenderer, 255, 0, 0, 255);
 
-				TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png", 
+				// Load the texture before loading the game objects
+				TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",
 					"Animate", gameRenderer);
+
+				gameObjects.push_back(new Player(new LoaderParams(100, 100, 100, 82, "Animate")));
+				gameObjects.push_back(new Enemy(new LoaderParams(300, 300, 100, 82, "Animate")));
 			}
 
 			else
@@ -140,6 +155,33 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 	return isRunning;
 }
 
+SDL_Renderer* Window::GetRenderer() const
+{
+	return gameRenderer;
+}
+
+void Window::DrawObjects()
+{
+	/* In other words, a virtual function would always call the draw function contained in GameObject, neither Player
+	nor Enemy. We would never have the overriden behavior we want. The virtual keyword would ensure the Player and Enemy
+	draw fucntions are called (go to GameObject.h file to see the virtual functions) */
+
+	// Loop through all the objects we initialized and draw them
+	for (vector<GameObject*>::size_type i = 0; i != gameObjects.size(); i++)
+	{
+		gameObjects[i]->Draw();
+	}
+}
+
+void Window::UpdateObjects()
+{
+	// Loop through all the objects we initialized and update them
+	for (vector<GameObject*>::size_type i = 0; i != gameObjects.size(); i++)
+	{
+		gameObjects[i]->Update();
+	}
+}
+
 void Window::RenderSDL()
 {
 	// While isRunning is set to true, render the window for us until we decide to quit the program
@@ -154,17 +196,14 @@ void Window::RenderSDL()
 		// Clear the window with the set drawing color
 		SDL_RenderClear(gameRenderer);
 
-		/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
-		the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
-		the amount of the animation frames in the sprite sheet */
-		currentFrame = static_cast<int>((SDL_GetTicks() / 100) % 6);
-
-		TheTextureManager::TextureManagerInstance()->DrawTexture("Animate", 0, 0, 100, 82, gameRenderer, SDL_FLIP_NONE);
-		TheTextureManager::TextureManagerInstance()->DrawFrame("Animate", 100, 100, 100, 82, 0, currentFrame, 
-			gameRenderer, SDL_FLIP_NONE);
+		DrawObjects();
+		UpdateObjects();
 
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
+
+		// Add delay to slow down any movement in the window
+		SDL_Delay(10);
 	}
 
 	/* Wait for a certain amount of milliseconds using SDL_Delay function
@@ -175,6 +214,9 @@ void Window::RenderSDL()
 		// Destroy both the window and renderer once isRunning is false
 		SDL_DestroyWindow(gameWindow);
 		SDL_DestroyRenderer(gameRenderer);
+
+		// Clean the window up after SDL quits
+		Window::~Window();
 
 		TheTextureManager::TextureManagerInstance()->~TextureManager();
 
