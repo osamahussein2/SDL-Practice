@@ -14,8 +14,8 @@ void Enemy::Draw()
 
 void Enemy::Update()
 {
-	x += 1;
-	y += 1;
+	position.SetX(position.GetX() + 1);
+	position.SetY(position.GetY() + 1);
 
 	/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
 	the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of

@@ -70,6 +70,11 @@ Window::Window()
 	flags = 0;
 
 	currentFrame = 0;
+
+	delayTime = 1000.0f / FPS;
+
+	frameStart = 0;
+	frameTime = 0;
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -190,6 +195,9 @@ void Window::RenderSDL()
 		// Call the viewing console messages function while SDL is running (optional, mainly used for testing purposes)
 		//ViewCoutMessages();
 
+		// Get the amount of milliseconds since SDL was initialized for frame start
+		frameStart = SDL_GetTicks();
+
 		// Call the handle events function whenever SDL window is running
 		HandleEvents();
 
@@ -199,11 +207,19 @@ void Window::RenderSDL()
 		DrawObjects();
 		UpdateObjects();
 
+		// Store how long the running loop took to run by subtracting the time our frame started from the current time
+		frameTime = SDL_GetTicks() - frameStart;
+
+		/* If the frame time is less than the time we want the frame to take (delay time), call SDL_Delay and make
+		our loop wait for the amount of time we want it to, subtracting how long the loop already took to complete */
+		if (frameTime < delayTime)
+		{
+			// Add delay to slow down any movement in the window
+			SDL_Delay(static_cast<int>(delayTime - frameTime));
+		}
+
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
-
-		// Add delay to slow down any movement in the window
-		SDL_Delay(10);
 	}
 
 	/* Wait for a certain amount of milliseconds using SDL_Delay function

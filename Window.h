@@ -47,6 +47,11 @@ private:
 	vector<GameObject*> gameObjects;
 
 	static Window* windowInstance;
+
+	const int FPS = 60;
+	int delayTime;
+
+	Uint32 frameStart, frameTime;
 };
 
 #endif /* defined(WINDOW_H) */

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Vector2.h"
 
 class SDLGameObject : public GameObject
 {
@@ -12,7 +13,7 @@ public:
 	virtual void Clean();
 
 protected:
-	int x, y;
+	Vector2 position, velocity, acceleration;
 	int width, height;
 	int currentRow, currentFrame;
 	string textureID;
