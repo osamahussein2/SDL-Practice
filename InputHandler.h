@@ -42,6 +42,8 @@ public:
 	void UpdateInputHandler();
 	void CleanInputHandler();
 
+	void Reset();
+
 private:
 	InputHandler() : joystickInitialized(false), mousePosition(new Vector2(0, 0)), keyPressed(false)
 	{

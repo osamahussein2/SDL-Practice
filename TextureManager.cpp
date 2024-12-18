@@ -92,3 +92,8 @@ void TextureManager::DrawFrame(string ID_, int x_, int y_, int width_, int heigh
 
 	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRectangle, &destRectangle, 0, 0, flip_);
 }
+
+void TextureManager::ClearFromTextureMap(string ID_)
+{
+	textureMap.erase(ID_);
+}

@@ -12,6 +12,10 @@ public:
 	virtual void Update();
 	virtual void Clean();
 
+	Vector2& GetPosition() { return position; }
+	int GetWidth() { return width; }
+	int GetHeight() { return height; }
+
 protected:
 	Vector2 position, velocity, acceleration;
 	int width, height;

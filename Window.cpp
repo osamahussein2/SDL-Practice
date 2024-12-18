@@ -1,6 +1,8 @@
 #include "Window.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "MenuState.h"
+#include "PlayState.h"
 
 /* SDL initialization flags:
 
@@ -77,6 +79,8 @@ Window::Window()
 
 	frameStart = 0;
 	frameTime = 0;
+
+	gameStateMachine = nullptr;
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -131,16 +135,20 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				and the alpha value (transparent-opaque). */
 
 				// Make the SDL window red
-				SDL_SetRenderDrawColor(gameRenderer, 255, 0, 0, 255);
+				SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
 
 				TheInputHandler::InputHandlerInstance()->InitializeJoysticks();
 
-				// Load the texture before loading the game objects
-				TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",
-					"Animate", gameRenderer);
+				// Create the game state machine object and set the first state after the render is successful
+				gameStateMachine = new GameStateMachine();
+				gameStateMachine->ChangeState(new MenuState());
 
-				gameObjects.push_back(new Player(new LoaderParams(100, 100, 100, 82, "Animate")));
-				gameObjects.push_back(new Enemy(new LoaderParams(300, 300, 100, 82, "Animate")));
+				// Load the texture before loading the game objects
+				//TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",
+					//"Animate", gameRenderer);
+
+				//gameObjects.push_back(new Player(new LoaderParams(100, 100, 100, 82, "Animate")));
+				//gameObjects.push_back(new Enemy(new LoaderParams(300, 300, 100, 82, "Animate")));
 			}
 
 			else
@@ -169,7 +177,7 @@ SDL_Renderer* Window::GetRenderer() const
 	return gameRenderer;
 }
 
-void Window::DrawObjects()
+void Window::Draw()
 {
 	/* In other words, a virtual function would always call the draw function contained in GameObject, neither Player
 	nor Enemy. We would never have the overriden behavior we want. The virtual keyword would ensure the Player and Enemy
@@ -182,7 +190,7 @@ void Window::DrawObjects()
 	}
 }
 
-void Window::UpdateObjects()
+void Window::Update()
 {
 	// Loop through all the objects we initialized and update them
 	for (vector<GameObject*>::size_type i = 0; i != gameObjects.size(); i++)
@@ -208,8 +216,8 @@ void Window::RenderSDL()
 		// Clear the window with the set drawing color
 		SDL_RenderClear(gameRenderer);
 
-		DrawObjects();
-		UpdateObjects();
+		//Draw();
+		//Update();
 
 		// Store how long the running loop took to run by subtracting the time our frame started from the current time
 		frameTime = SDL_GetTicks() - frameStart;
@@ -221,6 +229,9 @@ void Window::RenderSDL()
 			// Add delay to slow down any movement in the window
 			SDL_Delay(static_cast<int>(delayTime - frameTime));
 		}
+
+		gameStateMachine->Update();
+		gameStateMachine->Render();
 
 		// Show the SDL window render drawing
 		SDL_RenderPresent(gameRenderer);
@@ -248,6 +259,11 @@ void Window::RenderSDL()
 void Window::HandleEvents()
 {
 	TheInputHandler::InputHandlerInstance()->UpdateInputHandler();
+
+	/*if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_RETURN))
+	{
+		gameStateMachine->ChangeState(new PlayState());
+	}*/
 }
 
 void Window::ViewCoutMessages()
@@ -256,4 +272,9 @@ void Window::ViewCoutMessages()
 	// Then, call AllocConsole() function and andfreopen("CON", "w", stdout)
 	AllocConsole();
 	freopen("CON", "w", stdout);
+}
+
+GameStateMachine* Window::GetGameStateMachine()
+{
+	return gameStateMachine;
 }

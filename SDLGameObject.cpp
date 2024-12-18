@@ -13,8 +13,20 @@ position(loaderParams_->GetX(), loaderParams_->GetY()), velocity(0, 0), accelera
 
 void SDLGameObject::Draw()
 {
-	TextureManager::TextureManagerInstance()->DrawFrame(textureID, (int)position.GetX(), (int)position.GetY(), 
-		width, height, currentRow, currentFrame, Window::WindowInstance()->GetRenderer(), SDL_FLIP_NONE);
+	if (velocity.GetX() > 0)
+	{
+		TextureManager::TextureManagerInstance()->DrawFrame(textureID,
+			position.GetX(), position.GetY(),
+			width, height, currentRow, currentFrame,
+			Window::WindowInstance()->GetRenderer(), SDL_FLIP_HORIZONTAL);
+	}
+	else
+	{
+		TextureManager::TextureManagerInstance()->DrawFrame(textureID,
+			position.GetX(), position.GetY(),
+			width, height, currentRow, currentFrame,
+			Window::WindowInstance()->GetRenderer(), SDL_FLIP_NONE);
+	}
 }
 
 void SDLGameObject::Update()

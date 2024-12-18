@@ -80,7 +80,7 @@ void InputHandler::InitializeJoysticks()
 		// Set joystick initialized to true upon detecting joystick(s)
 		joystickInitialized = true;
 
-		cout << "Initialized " << joysticks.size() << " joystick(s)";
+		cout << "Initialized " << joysticks.size() << " joystick(s)" << endl;
 	}
 
 	else
@@ -88,7 +88,7 @@ void InputHandler::InitializeJoysticks()
 		// Else if we don't have a joystick, set joystick initialized to false
 		joystickInitialized = false;
 
-		cout << "Couldn't initialize joystick";
+		cout << "Couldn't initialize joystick" << endl;
 	}
 }
 
@@ -233,6 +233,11 @@ void InputHandler::CleanInputHandler()
 			SDL_JoystickClose(joysticks[i]);
 		}
 	}
+}
+
+void InputHandler::Reset()
+{
+	mouseButtonStates.push_back(false);
 }
 
 void InputHandler::OnKeyDown()

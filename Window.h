@@ -15,6 +15,7 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "InputHandler.h"
+#include "GameStateMachine.h"
 
 using namespace std;
 
@@ -27,11 +28,12 @@ public:
 
 	bool InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen);
 	SDL_Renderer* GetRenderer() const;
-	void DrawObjects();
-	void UpdateObjects();
+	void Draw();
+	void Update();
 	void RenderSDL();
 	void HandleEvents();
 	void ViewCoutMessages();
+	GameStateMachine* GetGameStateMachine();
 
 	bool isRunning;
 private:
@@ -54,6 +56,8 @@ private:
 	int delayTime;
 
 	Uint32 frameStart, frameTime;
+
+	GameStateMachine* gameStateMachine;
 };
 
 #endif /* defined(WINDOW_H) */

@@ -25,6 +25,7 @@ public:
 	void DrawTexture(string ID_, int x_, int y_, int width_, int height_, SDL_Renderer* rend_, SDL_RendererFlip flip_);
 	void DrawFrame(string ID_, int x_, int y_, int width_, int height_, int currentRow_, int currentFrame_, 
 		SDL_Renderer* rend_, SDL_RendererFlip flip_);
+	void ClearFromTextureMap(string ID_);
 
 private:
 
