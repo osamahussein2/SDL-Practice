@@ -14,6 +14,7 @@
 
 #include "GameObject.h"
 #include "TextureManager.h"
+#include "InputHandler.h"
 
 using namespace std;
 
@@ -31,13 +32,14 @@ public:
 	void RenderSDL();
 	void HandleEvents();
 	void ViewCoutMessages();
+
+	bool isRunning;
 private:
 	Window();
 
 	SDL_Window* gameWindow;
 	SDL_Renderer* gameRenderer;
 
-	bool isRunning;
 	int flags;
 
 	int currentFrame;

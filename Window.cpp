@@ -61,6 +61,8 @@
 // Define the static instance
 Window* Window::windowInstance = 0;
 
+typedef InputHandler TheInputHandler;
+
 Window::Window()
 {
 	gameWindow = 0;
@@ -130,6 +132,8 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 
 				// Make the SDL window red
 				SDL_SetRenderDrawColor(gameRenderer, 255, 0, 0, 255);
+
+				TheInputHandler::InputHandlerInstance()->InitializeJoysticks();
 
 				// Load the texture before loading the game objects
 				TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",
@@ -233,8 +237,8 @@ void Window::RenderSDL()
 
 		// Clean the window up after SDL quits
 		Window::~Window();
-
 		TheTextureManager::TextureManagerInstance()->~TextureManager();
+		TheInputHandler::InputHandlerInstance()->CleanInputHandler();
 
 		// Quit SDL when isRunning returns false
 		SDL_Quit();
@@ -243,23 +247,7 @@ void Window::RenderSDL()
 
 void Window::HandleEvents()
 {
-	SDL_Event event;
-
-	// Check if there's an event to handle
-	if (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-
-		// SDL_QUIT event occurs when the mouse clicks on a red cross in the window
-		case SDL_QUIT:
-			isRunning = false;
-			break;
-
-		default:
-			break;
-		}
-	}
+	TheInputHandler::InputHandlerInstance()->UpdateInputHandler();
 }
 
 void Window::ViewCoutMessages()
