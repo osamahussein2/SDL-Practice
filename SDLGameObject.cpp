@@ -1,14 +1,8 @@
 #include "SDLGameObject.h"
 
-SDLGameObject::SDLGameObject(const LoaderParams* loaderParams_) : GameObject(loaderParams_),
-position(loaderParams_->GetX(), loaderParams_->GetY()), velocity(0, 0), acceleration(0, 0)
+SDLGameObject::SDLGameObject() : GameObject(), position(0, 0), velocity(0, 0), acceleration(0, 0)
 {
-	width = loaderParams_->GetWidth();
-	height = loaderParams_->GetHeight();
-	textureID = loaderParams_->GetTextureID();
 
-	currentRow = 0;
-	currentFrame = 1;
 }
 
 void SDLGameObject::Draw()
@@ -37,4 +31,18 @@ void SDLGameObject::Update()
 
 void SDLGameObject::Clean()
 {
+}
+
+void SDLGameObject::LoadGameObject(const LoaderParams* loaderParams_)
+{
+	position = Vector2(loaderParams_->GetX(), loaderParams_->GetY());
+	velocity = Vector2(0, 0);
+	acceleration = Vector2(0, 0);
+
+	width = loaderParams_->GetWidth();
+	height = loaderParams_->GetHeight();
+	textureID = loaderParams_->GetTextureID();
+
+	currentRow = 0;
+	currentFrame = 1;
 }

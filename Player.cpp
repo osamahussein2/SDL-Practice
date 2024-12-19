@@ -2,7 +2,7 @@
 
 typedef InputHandler TheInputHandler;
 
-Player::Player(const LoaderParams* loaderParams_) : SDLGameObject(loaderParams_)
+Player::Player() : SDLGameObject()
 {
 
 }
@@ -33,6 +33,11 @@ void Player::Update()
 void Player::Clean()
 {
 
+}
+
+void Player::LoadGameObject(const LoaderParams* loaderParams_)
+{
+	SDLGameObject::LoadGameObject(loaderParams_);
 }
 
 void Player::HandleInput()

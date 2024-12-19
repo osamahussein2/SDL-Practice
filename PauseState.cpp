@@ -1,6 +1,7 @@
 #include "PauseState.h"
 #include "MenuButton.h"
 #include "MenuState.h"
+#include "StateParser.h"
 
 const string PauseState::pauseID = "PAUSE";
 
@@ -26,23 +27,19 @@ void PauseState::Render()
 
 bool PauseState::OnEnter()
 {
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Buttons/Resume button sheet.png", "ResumeGame",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
+	StateParser stateParser;
 
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Buttons/Main Menu button sheet.png", "MainMenu",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
+	// Parse the current state along with the XML file
+	stateParser.ParseState("test.xml", pauseID, &gameObjects, &textureIDList);
 
-	GameObject* mainMenuButton = new MenuButton(new LoaderParams(200, 100, 150, 80, "MainMenu"), PauseToMain);
-	GameObject* resumeButton = new MenuButton(new LoaderParams(200, 300, 150, 80, "ResumeGame"), ResumePlay);
+	// Push callbacks into the array inherited from MenuState
 
-	gameObjects.push_back(mainMenuButton);
-	gameObjects.push_back(resumeButton);
+	callbacks.push_back(0); // Push back 0 since callbackID start from 1
+	callbacks.push_back(PauseToMain);
+	callbacks.push_back(ResumePlay);
+
+	// Set the callbacks for menu items
+	SetCallbacks(callbacks);
 
 	cout << "entering PauseState" << endl;
 	return true;
@@ -56,8 +53,9 @@ bool PauseState::OnExit()
 	}
 
 	gameObjects.clear();
-	TheTextureManager::TextureManagerInstance()->ClearFromTextureMap("MainMenu");
-	TheTextureManager::TextureManagerInstance()->ClearFromTextureMap("ResumeGame");
+
+	GameState::ClearTextures();
+
 	TheInputHandler::InputHandlerInstance()->Reset();
 
 	cout << "exiting PauseState" << endl;
@@ -72,7 +70,7 @@ string PauseState::GetStateID() const
 void PauseState::PauseToMain()
 {
 	// Go back to the main menu and completely remove any other states
-	TheWindow::WindowInstance()->GetGameStateMachine()->ChangeState(new MenuState());
+	TheWindow::WindowInstance()->GetGameStateMachine()->ChangeState(new MainMenuState());
 }
 
 void PauseState::ResumePlay()
@@ -80,4 +78,20 @@ void PauseState::ResumePlay()
 	/* Once we are done with the pushed state, we remove it from the state array and the game continues to use
 	the previous state. We remove the pause state using the resume button's callback */
 	TheWindow::WindowInstance()->GetGameStateMachine()->PopState();
+}
+
+void PauseState::SetCallbacks(const vector<Callback>& callbacks_)
+{
+	// Loop through all the created game objects
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		// If they are of type MenuButton, assign the callback based on the ID passed in the file
+		if (dynamic_cast<MenuButton*>(gameObjects[i]))
+		{
+			MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
+
+			// Use the object's callbackID as the index into the callbacks vector and assign the correct function
+			menuButton->SetCallback(callbacks[menuButton->GetCallbackID()]);
+		}
+	}
 }

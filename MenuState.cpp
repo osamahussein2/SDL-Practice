@@ -1,13 +1,14 @@
 #include "MenuState.h"
 #include "MenuButton.h"
 #include "PlayState.h"
+#include "StateParser.h"
 
-const string MenuState::menuID = "MENU";
+const string MainMenuState::menuID = "MENU";
 
 typedef TextureManager TheTextureManager;
 typedef Window TheWindow;
 
-void MenuState::Update()
+void MainMenuState::Update()
 {
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -15,7 +16,7 @@ void MenuState::Update()
 	}
 }
 
-void MenuState::Render()
+void MainMenuState::Render()
 {
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -23,31 +24,27 @@ void MenuState::Render()
 	}
 }
 
-bool MenuState::OnEnter()
+bool MainMenuState::OnEnter()
 {
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Buttons/Play button sheet.png", "PlayButton",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
+	StateParser stateParser;
 
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Buttons/Exit button sheet.png", "ExitButton",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
+	// Parse the current state along with the XML file
+	stateParser.ParseState("test.xml", menuID, &gameObjects, &textureIDList);
 
-	GameObject* playButton = new MenuButton(new LoaderParams(225, 100, 166, 100, "PlayButton"), MenuToPlay);
-	GameObject* exitButton = new MenuButton(new LoaderParams(225, 300, 166, 100, "ExitButton"), ExitFromMenu);
+	// Push callbacks into the array inherited from MenuState
 
-	gameObjects.push_back(playButton);
-	gameObjects.push_back(exitButton);
+	callbacks.push_back(0); // Push back 0 since callbackID start from 1
+	callbacks.push_back(MenuToPlay);
+	callbacks.push_back(ExitFromMenu);
+
+	// Set the callbacks for menu items
+	SetCallbacks(callbacks);
 
 	cout << "entering MenuState" << endl;
 	return true;
 }
 
-bool MenuState::OnExit()
+bool MainMenuState::OnExit()
 {
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -55,24 +52,40 @@ bool MenuState::OnExit()
 	}
 
 	gameObjects.clear();
-	TheTextureManager::TextureManagerInstance()->ClearFromTextureMap("PlayButton");
-	TheTextureManager::TextureManagerInstance()->ClearFromTextureMap("ExitButton");
+
+	GameState::ClearTextures();
 
 	cout << "exiting MenuState" << endl;
 	return true;
 }
 
-string MenuState::GetStateID() const
+string MainMenuState::GetStateID() const
 {
 	return menuID;
 }
 
-void MenuState::MenuToPlay()
+void MainMenuState::SetCallbacks(const vector<Callback>& callbacks_)
+{
+	// Loop through all the created game objects
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		// If they are of type MenuButton, assign the callback based on the ID passed in the file
+		if (dynamic_cast<MenuButton*>(gameObjects[i]))
+		{
+			MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
+
+			// Use the object's callbackID as the index into the callbacks vector and assign the correct function
+			menuButton->SetCallback(callbacks[menuButton->GetCallbackID()]);
+		}
+	}
+}
+
+void MainMenuState::MenuToPlay()
 {
 	TheWindow::WindowInstance()->GetGameStateMachine()->ChangeState(new PlayState());
 }
 
-void MenuState::ExitFromMenu()
+void MainMenuState::ExitFromMenu()
 {
 	TheWindow::WindowInstance()->isRunning = false;
 }

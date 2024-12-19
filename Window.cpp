@@ -3,6 +3,11 @@
 #include "Enemy.h"
 #include "MenuState.h"
 #include "PlayState.h"
+#include "GameObjectFactory.h"
+#include "MenuButton.h"
+#include "AnimatedGraphic.h"
+
+typedef GameObjectFactory TheGameObjectFactory;
 
 /* SDL initialization flags:
 
@@ -139,9 +144,14 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 
 				TheInputHandler::InputHandlerInstance()->InitializeJoysticks();
 
+				TheGameObjectFactory::Instance()->RegisterType("MenuButton", new MenuButtonCreator());
+				TheGameObjectFactory::Instance()->RegisterType("Player", new PlayerCreator());
+				TheGameObjectFactory::Instance()->RegisterType("Enemy", new EnemyCreator());
+				TheGameObjectFactory::Instance()->RegisterType("AnimatedGraphic", new AnimatedGraphicCreator());
+
 				// Create the game state machine object and set the first state after the render is successful
 				gameStateMachine = new GameStateMachine();
-				gameStateMachine->ChangeState(new MenuState());
+				gameStateMachine->ChangeState(new MainMenuState());
 
 				// Load the texture before loading the game objects
 				//TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",

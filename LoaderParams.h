@@ -10,7 +10,7 @@ accessed to set the initial values of an object */
 class LoaderParams
 {
 public:
-	LoaderParams(int x_, int y_, int width_, int height_, string textureID_);
+	LoaderParams(int x_, int y_, int width_, int height_, string textureID_, int callbackID_ = 0, int animationSpeed_ = 0);
 
 	int GetX() const;
 	int GetY() const;
@@ -19,10 +19,16 @@ public:
 
 	string GetTextureID() const;
 
+	int GetCallbackID() const;
+	int GetAnimationSpeed() const;
+
 private:
 	int x, y;
 
 	int width, height;
 
 	string textureID;
+
+	int callbackID;
+	int animationSpeed;
 };

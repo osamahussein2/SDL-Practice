@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "PauseState.h"
 #include "GameOverState.h"
+#include "StateParser.h"
 
 const string PlayState::playID = "PLAY";
 
@@ -42,23 +43,10 @@ void PlayState::Render()
 
 bool PlayState::OnEnter()
 {
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Helicopter.png", "Helicopter",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
+	StateParser stateParser;
 
-	if (!TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Helicopter2.png", "Helicopter2",
-		TheWindow::WindowInstance()->GetRenderer()))
-	{
-		return false;
-	}
-
-	GameObject* player = new Player(new LoaderParams(500, 100, 128, 55, "Helicopter"));
-	GameObject* enemy = new Enemy(new LoaderParams(100, 100, 110, 55, "Helicopter2"));
-
-	gameObjects.push_back(player);
-	gameObjects.push_back(enemy);
+	// Parse the current state along with the XML file
+	stateParser.ParseState("test.xml", playID, &gameObjects, &textureIDList);
 
 	cout << "entering PlayState" << endl;
 	return true;
@@ -72,7 +60,8 @@ bool PlayState::OnExit()
 	}
 
 	gameObjects.clear();
-	TheTextureManager::TextureManagerInstance()->ClearFromTextureMap("Helicopter");
+
+	GameState::ClearTextures();
 
 	cout << "exiting PlayState" << endl;
 	return true;

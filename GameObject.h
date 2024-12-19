@@ -19,7 +19,9 @@ public:
 	virtual void Update() = 0;
 	virtual void Clean() = 0;
 
+	virtual void LoadGameObject(const LoaderParams* loaderParams_) = 0;
+
 protected:
-	GameObject(const LoaderParams* loaderParams_) {}
+	GameObject() {}
 	virtual ~GameObject() {}
 };

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include "TextureManager.h"
 
 using namespace std;
 
@@ -9,6 +11,8 @@ one state at a time (known as the current state), and can change from one state 
 
 /* This is an abstract base class since we're not putting any functionality into it, we just want our dervied classes
 to follow this blueprint */
+
+typedef TextureManager TheTextureManager;
 
 class GameState
 {
@@ -19,6 +23,17 @@ public:
 	virtual bool OnEnter() = 0;
 	virtual bool OnExit() = 0;
 
+	virtual void ClearTextures()
+	{
+		for (int i = 0; i < textureIDList.size(); i++)
+		{
+			TheTextureManager::TextureManagerInstance()->ClearFromTextureMap(textureIDList[i]);
+		}
+	}
+
 	// ID is used to ensure that states don't get repeated
 	virtual string GetStateID() const = 0;
+
+protected:
+	vector<string> textureIDList;
 };

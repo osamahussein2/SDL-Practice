@@ -4,10 +4,11 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "Window.h"
+#include "MenuState.h"
 
 class GameObject;
 
-class PauseState : public GameState
+class PauseState : public MenuState
 {
 public:
 	virtual void Update();
@@ -21,6 +22,8 @@ public:
 private:
 	static void PauseToMain();
 	static void ResumePlay();
+
+	virtual void SetCallbacks(const vector<Callback>& callbacks_);
 
 	static const string pauseID;
 

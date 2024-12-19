@@ -1,9 +1,8 @@
 #include "Enemy.h"
 
-Enemy::Enemy(const LoaderParams* loaderParams_) : SDLGameObject(loaderParams_)
+Enemy::Enemy() : SDLGameObject()
 {
-	velocity.SetY(2);
-	velocity.SetX(0.001);
+
 }
 
 void Enemy::Draw()
@@ -39,4 +38,12 @@ void Enemy::Update()
 void Enemy::Clean()
 {
 
+}
+
+void Enemy::LoadGameObject(const LoaderParams* loaderParams_)
+{
+	SDLGameObject::LoadGameObject(loaderParams_);
+
+	velocity.SetY(2);
+	velocity.SetX(0.001);
 }

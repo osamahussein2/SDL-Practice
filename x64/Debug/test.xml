@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<STATES>
+	<MENU>
+		<TEXTURES>
+			<texture filename="Buttons/Play button sheet.png" ID="PlayButton"/>
+			<texture filename="Buttons/Exit button sheet.png" ID="ExitButton"/>
+		</TEXTURES>
+		<OBJECTS>
+			<object type="MenuButton" x="225" y="100" width="167" height="100" textureID="PlayButton" numFrames="3" callbackID="1"/>
+			<object type="MenuButton" x="225" y="300" width="167" height="100" textureID="ExitButton" numFrames="3" callbackID="2"/>
+		</OBJECTS>
+	</MENU>
+	<PLAY>
+		<TEXTURES>
+			<texture filename="Sprites/Helicopter.png" ID="Helicopter"/>
+			<texture filename="Sprites/Helicopter2.png" ID="Helicopter2"/>
+		</TEXTURES>
+		<OBJECTS>
+			<object type="Player" x="500" y="100" width="128" height="55" textureID="Helicopter" numFrames="1"/>
+			<object type="Enemy" x="100" y="100" width="110" height="55" textureID="Helicopter2" numFrames="4"/>
+		</OBJECTS>
+	</PLAY>
+	<PAUSE>
+		<TEXTURES>
+			<texture filename="Buttons/Resume button sheet.png" ID="ResumeButton"/>
+			<texture filename="Buttons/Main Menu button sheet.png" ID="MainMenuButton"/>
+		</TEXTURES>
+		<OBJECTS>
+			<object type="MenuButton" x="225" y="100" width="150" height="80" textureID="MainMenuButton" numFrames="0" callbackID="1"/>
+			<object type="MenuButton" x="225" y="300" width="150" height="80" textureID="ResumeButton" numFrames="0" callbackID="2"/>
+		</OBJECTS>
+	</PAUSE>	
+	<GAMEOVER>
+		<TEXTURES>
+			<texture filename="Animated Text/Game Over text sheet.png" ID="GameOverText"/>
+			<texture filename="Buttons/Main Menu button sheet.png" ID="MainMenuButton"/>
+			<texture filename="Buttons/Restart button sheet.png" ID="RestartButton"/>
+		</TEXTURES>
+		<OBJECTS>	
+			<object type="AnimatedGraphic" x="200" y="100" width="225" height="35" textureID="GameOverText" numFrames="2" animSpeed="2"/>
+			<object type="MenuButton" x="225" y="200" width="153" height="80" textureID="MainMenuButton" numFrames="0" callbackID="1"/>
+			<object type="MenuButton" x="225" y="300" width="160" height="80" textureID="RestartButton" numFrames="0" callbackID="2"/>
+		</OBJECTS>
+	</GAMEOVER>
+</STATES>

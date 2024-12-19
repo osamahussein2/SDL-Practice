@@ -2,8 +2,7 @@
 
 typedef InputHandler TheInputHandler;
 
-MenuButton::MenuButton(const LoaderParams* loaderParams_, void(*callback)()) : SDLGameObject(loaderParams_), 
-callbackFunction(callback)
+MenuButton::MenuButton() : SDLGameObject()
 {
 	// Start at frame 0
 	currentFrame = MOUSE_OUT;
@@ -57,4 +56,22 @@ void MenuButton::Update()
 void MenuButton::Clean()
 {
 	SDLGameObject::Clean();
+}
+
+void MenuButton::LoadGameObject(const LoaderParams* loaderParams_)
+{
+	SDLGameObject::LoadGameObject(loaderParams_);
+
+	callbackID = loaderParams_->GetCallbackID();
+	currentFrame = MOUSE_OUT;
+}
+
+int MenuButton::GetCallbackID()
+{
+	return callbackID;
+}
+
+void MenuButton::SetCallback(void(*callback)())
+{
+	callbackFunction = callback;
 }

@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Window.h"
-#include "Vector2.h"
 
 class SDLGameObject : public GameObject
 {
 public:
-	SDLGameObject(const LoaderParams* loaderParams_);
+	SDLGameObject();
 
 	virtual void Draw();
 	virtual void Update();
 	virtual void Clean();
+
+	virtual void LoadGameObject(const LoaderParams* loaderParams_);
 
 	Vector2& GetPosition() { return position; }
 	int GetWidth() { return width; }
@@ -21,4 +22,6 @@ protected:
 	int width, height;
 	int currentRow, currentFrame;
 	string textureID;
+	int callbackID;
+	int animationSpeed;
 };

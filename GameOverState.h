@@ -4,11 +4,12 @@
 #include "GameState.h"
 #include "GameObject.h"
 #include "TextureManager.h"
-#include "Window.h"
+#include "MenuState.h"
+#include "MenuButton.h"
 
 class GameObject;
 
-class GameOverState : public GameState
+class GameOverState : public MenuState
 {
 public:
 	virtual void Update();
@@ -22,6 +23,8 @@ public:
 private:
 	static void GameOverToMain();
 	static void RestartPlay();
+
+	virtual void SetCallbacks(const vector<Callback>& callbacks_);
 
 	static const string gameOverID;
 
