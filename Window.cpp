@@ -86,6 +86,9 @@ Window::Window()
 	frameTime = 0;
 
 	gameStateMachine = nullptr;
+
+	windowWidth = 0;
+	windowHeight = 0;
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -109,6 +112,9 @@ Window* Window::WindowInstance()
 
 bool Window::InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen)
 {
+	windowWidth = width;
+	windowHeight = height;
+
 	// Initialize SDL to initialize all of the SDL subsystems
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
@@ -124,7 +130,7 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 			flags = SDL_WINDOW_FULLSCREEN;
 		}
 
-		gameWindow = SDL_CreateWindow(title, x, y, width, height, fullscreen);
+		gameWindow = SDL_CreateWindow(title, x, y, windowWidth, windowHeight, fullscreen);
 
 		// Create an SDL renderer if the window creation works
 		if (gameWindow != 0)
@@ -140,7 +146,7 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				and the alpha value (transparent-opaque). */
 
 				// Make the SDL window red
-				SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
+				SDL_SetRenderDrawColor(gameRenderer, 0, 200, 255, 255);
 
 				TheInputHandler::InputHandlerInstance()->InitializeJoysticks();
 
@@ -287,4 +293,14 @@ void Window::ViewCoutMessages()
 GameStateMachine* Window::GetGameStateMachine()
 {
 	return gameStateMachine;
+}
+
+int Window::GetWindowWidth() const
+{
+	return windowWidth;
+}
+
+int Window::GetWindowHeight() const
+{
+	return windowHeight;
 }

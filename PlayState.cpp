@@ -4,6 +4,7 @@
 #include "PauseState.h"
 #include "GameOverState.h"
 #include "StateParser.h"
+#include "LevelParser.h"
 
 const string PlayState::playID = "PLAY";
 
@@ -20,33 +21,37 @@ void PlayState::Update()
 		TheWindow::WindowInstance()->GetGameStateMachine()->PushState(new PauseState());
 	}
 
-	for (int i = 0; i < gameObjects.size(); i++)
+	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Update();
-	}
+	}*/
+
+	level->Update();
 
 	// We have to use a dynamic cast object to cast our GameObject* class to an SDLGameObject* class
-	if (CheckCollision(dynamic_cast<SDLGameObject*>(gameObjects[0]), dynamic_cast<SDLGameObject*>(gameObjects[1])))
+	/*if (CheckCollision(dynamic_cast<SDLGameObject*>(gameObjects[0]), dynamic_cast<SDLGameObject*>(gameObjects[1])))
 	{
 		// If collision does occur, transition to the game over state
 		TheWindow::WindowInstance()->GetGameStateMachine()->PushState(new GameOverState());
-	}
+	}*/
 }
 
 void PlayState::Render()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Draw();
-	}
+	}*/
+
+	level->Render();
 }
 
 bool PlayState::OnEnter()
 {
-	StateParser stateParser;
+	LevelParser levelParser;
 
-	// Parse the current state along with the XML file
-	stateParser.ParseState("test.xml", playID, &gameObjects, &textureIDList);
+	// Parse the current level along with the XML file
+	level = levelParser.ParseLevel("Sprites/Map1.tmx");
 
 	cout << "entering PlayState" << endl;
 	return true;
@@ -54,14 +59,14 @@ bool PlayState::OnEnter()
 
 bool PlayState::OnExit()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Clean();
 	}
 
 	gameObjects.clear();
 
-	GameState::ClearTextures();
+	GameState::ClearTextures();*/
 
 	cout << "exiting PlayState" << endl;
 	return true;

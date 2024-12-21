@@ -35,6 +35,9 @@ public:
 	void ViewCoutMessages();
 	GameStateMachine* GetGameStateMachine();
 
+	int GetWindowWidth() const;
+	int GetWindowHeight() const;
+
 	bool isRunning;
 private:
 	Window();
@@ -58,6 +61,8 @@ private:
 	Uint32 frameStart, frameTime;
 
 	GameStateMachine* gameStateMachine;
+
+	int windowWidth, windowHeight;
 };
 
 #endif /* defined(WINDOW_H) */

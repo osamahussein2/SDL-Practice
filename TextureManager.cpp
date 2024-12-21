@@ -8,9 +8,6 @@ TextureManager::~TextureManager()
 	texture = nullptr;
 
 	textureLoaded = false;
-
-	DeleteObject(&srcRectangle);
-	DeleteObject(&destRectangle);
 }
 
 TextureManager* TextureManager::TextureManagerInstance()
@@ -91,6 +88,22 @@ void TextureManager::DrawFrame(string ID_, int x_, int y_, int width_, int heigh
 	//SDL_RenderCopy(gameRenderer, spriteTexture, 0, 0); // Render the entire texture
 
 	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRectangle, &destRectangle, 0, 0, flip_);
+}
+
+void TextureManager::DrawTile(string ID_, int margin_, int spacing_, int x_, int y_, int width_, int height_, 
+	int currentRow_, int currentFrame_, SDL_Renderer* rend_)
+{
+	SDL_Rect srcRect, destRect;
+
+	srcRect.x = margin_ + (spacing_ + width_) * currentFrame_;
+	srcRect.y = margin_ + (spacing_ + height_) * currentRow_;
+	srcRect.w = destRect.w = width_;
+	srcRect.h = destRect.h = height_;
+
+	destRect.x = x_;
+	destRect.y = y_;
+
+	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRect, &destRect, 0, 0, SDL_FLIP_NONE);
 }
 
 void TextureManager::ClearFromTextureMap(string ID_)

@@ -5,6 +5,7 @@
 #include "SDLGameObject.h"
 #include "TextureManager.h"
 #include "Window.h"
+#include "Level.h"
 
 class GameObject;
 
@@ -25,4 +26,6 @@ private:
 	static const string playID;
 
 	vector<GameObject*> gameObjects;
+
+	Level* level;
 };

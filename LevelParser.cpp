@@ -2,11 +2,14 @@
 #include "TextureManager.h"
 #include "Window.h"
 #include "TileLayer.h"
+#include "ObjectLayer.h"
+#include "GameObjectFactory.h"
 #include "base64.h"
 #include <zlib.h>
 
 typedef TextureManager TheTextureManager;
 typedef Window TheWindow;
+typedef GameObjectFactory TheGameObjectFactory;
 
 // LevelParser has access to the private constructor of Level and can return new instances of it
 Level* LevelParser::ParseLevel(const char* levelFile_)
@@ -20,6 +23,19 @@ Level* LevelParser::ParseLevel(const char* levelFile_)
 
 	// Get the root node
 	TiXmlElement* root = levelDocument.RootElement();
+
+	// Get the properties node
+	TiXmlElement* properties = 0;
+
+	// Search the properties node
+	for (TiXmlElement* element = root->FirstChildElement(); element != NULL; element = element->NextSiblingElement())
+	{
+		if (element->Value() == string("properties"))
+		{
+			properties = element;
+			break;
+		}
+	}
 
 	// Grab the attribute strings from the XML and set the member variables for LevelParser
 	root->Attribute("tilewidth", &tileSize);
@@ -35,14 +51,32 @@ Level* LevelParser::ParseLevel(const char* levelFile_)
 			ParseTilesets(element, level->GetTilesets());
 		}
 	}
+
+	// Parse the textures
+	for (TiXmlElement* element = properties->FirstChildElement(); element != NULL; element = element->NextSiblingElement())
+	{
+		// Check for property nodes and parse the textures
+		if (element->Value() == string("property"))
+		{
+			ParseTextures(element);
+		}
+	}
 	
 	// Parse any object layers
 	for (TiXmlElement* element = root->FirstChildElement(); element != NULL; element = element->NextSiblingElement())
 	{
 		// Check for layer nodes and parse them
-		if (element->Value() == string("layer"))
+		if (element->Value() == string("objectgroup") || element->Value() == string("layer"))
 		{
-			ParseTileLayer(element, level->GetLayers(), level->GetTilesets());
+			if (element->FirstChildElement()->Value() == string("object"))
+			{
+				ParseObjectLayer(element, level->GetLayers());
+			}
+
+			else if (element->FirstChildElement()->Value() == string("data"))
+			{
+				ParseTileLayer(element, level->GetLayers(), level->GetTilesets());
+			}
 		}
 	}
 
@@ -51,19 +85,22 @@ Level* LevelParser::ParseLevel(const char* levelFile_)
 
 void LevelParser::ParseTilesets(TiXmlElement* tilesetRoot_, vector<Tileset>* tilesets_)
 {
-	// Add the tileset to texture manager
-	TheTextureManager::TextureManagerInstance()->LoadTexture(tilesetRoot_->FirstChildElement()->Attribute("source"),
+	// Add the tileset to texture manager 
+
+	/* tilesetRoot_->FirstChildElement()->Attribute("source") doesn't load the tilemap for me for some reason when 
+	I pass it in the first parameter */
+	TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Blocks1.png", 
 		tilesetRoot_->Attribute("name"), TheWindow::WindowInstance()->GetRenderer());
 
 	// Create a tileset object
 	Tileset tileset;
 	tilesetRoot_->FirstChildElement()->Attribute("width", &tileset.width);
 	tilesetRoot_->FirstChildElement()->Attribute("height", &tileset.height);
-	tilesetRoot_->FirstChildElement()->Attribute("firstgid", &tileset.firstGridID);
-	tilesetRoot_->FirstChildElement()->Attribute("tilewidth", &tileset.tileWidth);
-	tilesetRoot_->FirstChildElement()->Attribute("tileheight", &tileset.tileHeight);
-	tilesetRoot_->FirstChildElement()->Attribute("spacing", &tileset.spacing);
-	tilesetRoot_->FirstChildElement()->Attribute("margin", &tileset.margin);
+	tilesetRoot_->Attribute("firstgid", &tileset.firstGridID);
+	tilesetRoot_->Attribute("tilewidth", &tileset.tileWidth);
+	tilesetRoot_->Attribute("tileheight", &tileset.tileHeight);
+	tilesetRoot_->Attribute("spacing", &tileset.spacing);
+	tilesetRoot_->Attribute("margin", &tileset.margin);
 
 	tileset.name = tilesetRoot_->Attribute("name");
 
@@ -82,7 +119,7 @@ void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* lay
 
 	// A string that will be our base64 decoded information and a place to store our XML node once we find it
 	string decodedIDs;
-	TiXmlElement* dataNode{};
+	TiXmlElement* dataNode = 0;
 
 	for (TiXmlElement* element = tileElement_->FirstChildElement(); element != NULL; 
 		element = element->NextSiblingElement())
@@ -138,4 +175,85 @@ void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* lay
 	// Set the layer's tile data and then push the layer into the layers array of our Level
 	tileLayer->SetTileIDs(tileData);
 	layers_->push_back(tileLayer);
+}
+
+void LevelParser::ParseTextures(TiXmlElement* textureRoot_)
+{
+	TheTextureManager::TextureManagerInstance()->LoadTexture(textureRoot_->Attribute("value"),
+		textureRoot_->Attribute("name"), TheWindow::WindowInstance()->GetRenderer());
+}
+
+void LevelParser::ParseObjectLayer(TiXmlElement* objectElement_, vector<Layer*>* layers_)
+{
+	ObjectLayer* objectLayer = new ObjectLayer();
+
+	cout << objectElement_->FirstChildElement()->Value() << endl;
+
+	for (TiXmlElement* element = objectElement_->FirstChildElement(); element != NULL; element = element->NextSiblingElement())
+	{
+		cout << element->Value() << endl;
+
+		if (element->Value() == string("object"))
+		{
+			int x, y, width, height, numberOfFrames, callbackID, animationSpeed;
+			string textureID;
+
+			element->Attribute("x", &x);
+			element->Attribute("y", &y);
+
+			GameObject* gameObject = TheGameObjectFactory::Instance()->Create(element->Attribute("type"));
+
+			for (TiXmlElement* properties = element->FirstChildElement(); properties != NULL;
+				properties = properties->NextSiblingElement())
+			{
+				if (properties->Value() == string("properties"))
+				{
+					for (TiXmlElement* property = properties->FirstChildElement(); property != NULL;
+						property = property->NextSiblingElement())
+					{
+						// Check for the name of the property
+						if (property->Value() == string("property"))
+						{
+							if (property->Attribute("name") == string("numFrames"))
+							{
+								property->Attribute("value", &numberOfFrames);
+							}
+
+							else if (property->Attribute("name") == string("textureHeight"))
+							{
+								property->Attribute("value", &height);
+							}
+
+							else if (property->Attribute("name") == string("textureID"))
+							{
+								textureID = property->Attribute("value");
+							}
+
+							else if (property->Attribute("name") == string("textureWidth"))
+							{
+								property->Attribute("value", &width);
+							}
+
+							else if (property->Attribute("name") == string("callbackID"))
+							{
+								property->Attribute("value", &callbackID);
+							}
+
+							else if (property->Attribute("name") == string("animSpeed"))
+							{
+								property->Attribute("value", &animationSpeed);
+							}
+						}
+
+					}
+				}
+			}
+
+			// Create the game object and add it to object layer's game object array
+			gameObject->LoadGameObject(new LoaderParams(x, y, width, height, textureID, callbackID, animationSpeed));
+			objectLayer->GetGameObjects()->push_back(gameObject);
+		}
+	}
+
+	layers_->push_back(objectLayer);
 }
