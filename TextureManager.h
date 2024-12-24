@@ -24,10 +24,14 @@ public:
 	bool LoadTexture(string fileName_, string ID_, SDL_Renderer* rend_);
 	void DrawTexture(string ID_, int x_, int y_, int width_, int height_, SDL_Renderer* rend_, SDL_RendererFlip flip_);
 	void DrawFrame(string ID_, int x_, int y_, int width_, int height_, int currentRow_, int currentFrame_, 
-		SDL_Renderer* rend_, SDL_RendererFlip flip_);
+		SDL_Renderer* rend_, double angle_, int alpha_, SDL_RendererFlip flip_);
 	void DrawTile(string ID_, int margin_, int spacing_, int x_, int y_, int width_, int height_, int currentRow_,
 		int currentFrame_, SDL_Renderer* rend_);
+
+	void ClearTextureMap();
 	void ClearFromTextureMap(string ID_);
+
+	map<string, SDL_Texture*> GetTextureMap();
 
 private:
 

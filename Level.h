@@ -1,9 +1,12 @@
 #pragma once
 
-#include <string>
+#include <iostream>
 #include <vector>
 
 #include "Layer.h"
+#include "LevelParser.h"
+#include "Player.h"
+#include "CollisionManager.h"
 
 using namespace std;
 
@@ -24,6 +27,12 @@ public:
 
 	vector<Tileset>* GetTilesets();
 	vector<Layer*>* GetLayers();
+	vector<TileLayer*>* GetCollisionLayers();
+
+	const vector<TileLayer*>& GetCollidableLayers();
+
+	Player* GetPlayer() { return player; }
+	void SetPlayer(Player* player_) { player = player_; }
 
 private:
 
@@ -34,4 +43,7 @@ private:
 
 	vector<Tileset> tilesets;
 	vector<Layer*> layers;
+	vector<TileLayer*> collisionLayers;
+
+	Player* player;
 };

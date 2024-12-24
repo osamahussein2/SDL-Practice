@@ -8,6 +8,9 @@ using namespace std;
 
 class MenuState : public GameState
 {
+public:
+	virtual ~MenuState() {}
+
 protected:
 	typedef void (*Callback) ();
 	virtual void SetCallbacks(const vector<Callback>& callbacks_) = 0;

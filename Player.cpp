@@ -1,8 +1,14 @@
 #include "Player.h"
+#include "Window.h"
+#include "InputHandler.h"
+#include "TileLayer.h"
+#include "BulletHandler.h"
+#include "SoundManager.h"
 
 typedef InputHandler TheInputHandler;
+typedef Window TheWindow;
 
-Player::Player() : SDLGameObject()
+Player::Player() : ShooterObject()
 {
 
 }
@@ -11,23 +17,68 @@ void Player::Draw()
 {
 	/* The :: operator is called the scope resolution operator and it is used to identify the specific place that some
 	data or function resides */
-	SDLGameObject::Draw();
+	ShooterObject::Draw();
 }
 
 void Player::Update()
 {
 	// A derived class can override the functionality of a parent class
-	velocity.SetX(0);
-	velocity.SetY(0);
 
-	HandleInput();
+	// If the level is complete, then fly off the screen
+	if (TheWindow::WindowInstance()->GetLevelComplete())
+	{
+		/* Once a level is complete and the player has flown offscreen, increment the current level */
+		if (position.GetX() >= TheWindow::WindowInstance()->GetWindowWidth())
+		{
+			TheWindow::WindowInstance()->SetCurrentLevel(TheWindow::WindowInstance()->GetCurrentLevel() + 1);
+		}
 
-	/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
-	the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
-	the amount of the animation frames in the sprite sheet */
-	currentFrame = static_cast<int>((SDL_GetTicks() / 100) % 5);
+		else
+		{
+			velocity.SetX(3);
+			velocity.SetY(0);
+			ShooterObject::Update();
+			HandleAnimation();
+		}
+	}
 
-	SDLGameObject::Update();
+	else
+	{
+		// If the player isn't doing the death animation, then update it normally
+		if (!isDying)
+		{
+			// Reset velocity
+			velocity.SetX(0);
+			velocity.SetY(0);
+
+			// Get input
+			HandleInput();
+
+			// Do normal position += velocity update
+			ShooterObject::Update();
+
+			// Update the animation
+			HandleAnimation();
+		}
+
+		// If the player is doing the death animation though
+		else
+		{
+			/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
+			the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
+			the amount of the animation frames in the sprite sheet */
+			currentFrame = static_cast<int>((SDL_GetTicks() / 100) % numberOfFrames);
+
+			// If the death animation has completed
+			if (dyingCounter == dyingTime)
+			{
+				// Ressurect the player
+				Ressurect();
+			}
+
+			dyingCounter++;
+		}
+	}
 }
 
 void Player::Clean()
@@ -35,9 +86,43 @@ void Player::Clean()
 
 }
 
-void Player::LoadGameObject(const LoaderParams* loaderParams_)
+void Player::LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_)
 {
-	SDLGameObject::LoadGameObject(loaderParams_);
+	ShooterObject::LoadGameObject(loaderParams_);
+
+	// set up bullets
+	bulletFiringSpeed = 13;
+	moveSpeed = 3;
+
+	// we want to be able to fire instantly
+	bulletCounter = bulletFiringSpeed;
+
+	// time it takes for death explosion
+	dyingTime = 100;
+}
+
+void Player::Ressurect()
+{
+	/* The Ressurect function resets the player back to the center of the screen and temporarily makes the Player object
+	invulnerable, which is visualized using alpha of the texture. This function is also responsible for resetting the size
+	value of the texture which is changed in DoDyingAnimation to accommodate for the explosion texture */
+
+	TheWindow::WindowInstance()->SetPlayerLives(TheWindow::WindowInstance()->GetPlayerLives() - 1);
+
+	position.SetX(10);
+	position.SetY(200);
+
+	isDying = false;
+
+	textureID = "player";
+
+	currentFrame = 0;
+	numberOfFrames = 5;
+	width = 101;
+	height = 46;
+
+	dyingCounter = 0;
+	invulnerable = true;
 }
 
 void Player::HandleInput()
@@ -122,4 +207,61 @@ void Player::HandleInput()
 
 	// Divide the vector by 100 to see objects following the mouse as opposed to sticking to the mouse position
 	//velocity = (*vec - position) / 100;
+}
+
+void Player::HandleAnimation()
+{
+	/* Animation is a big part of the feel of the Player object; from flashing (when invulnerable), to rotating(when moving
+	in a forward or backward direction) */
+
+	// If the player is invulnerable we can flash its alpha to let people know
+	if (invulnerable)
+	{
+		// Invulnerability is finished, reset the values back to default
+		if (invulnerableCounter == invulnerableTime)
+		{
+			invulnerable = false;
+			invulnerableCounter = 0;
+			alpha = 255;
+		}
+
+		// Else, flash the alpha on and off by adjusting the alpha numbers
+		else
+		{
+			if (alpha == 255)
+			{
+				alpha = 0;
+			}
+
+			else
+			{
+				alpha = 255;
+			}
+		}
+
+		// Increment the invulnerable counter
+		invulnerableCounter++;
+	}
+
+	// If the player isn't dead, then we can change the angle with the velocity to give the impression of a moving helicopter
+	if (!isDead)
+	{
+		if (velocity.GetX() < 0)
+		{
+			angle = -10.0;
+		}
+
+		else if (velocity.GetX() > 0)
+		{
+			angle = 10.0;
+		}
+
+		else
+		{
+			angle = 0.0;
+		}
+	}
+
+	// Set the current frame to animate the helicopter propellors
+	currentFrame = int(((SDL_GetTicks() / (100)) % numberOfFrames));
 }

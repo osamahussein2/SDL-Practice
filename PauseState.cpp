@@ -11,17 +11,23 @@ typedef Window TheWindow;
 
 void PauseState::Update()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Update();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Update();
+		}
 	}
 }
 
 void PauseState::Render()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Draw();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Draw();
+		}
 	}
 }
 
@@ -30,7 +36,7 @@ bool PauseState::OnEnter()
 	StateParser stateParser;
 
 	// Parse the current state along with the XML file
-	stateParser.ParseState("test.xml", pauseID, &gameObjects, &textureIDList);
+	stateParser.ParseState("Attack.xml", pauseID, &gameObjects, &textureIDList);
 
 	// Push callbacks into the array inherited from MenuState
 
@@ -40,6 +46,8 @@ bool PauseState::OnEnter()
 
 	// Set the callbacks for menu items
 	SetCallbacks(callbacks);
+
+	loadingComplete = true;
 
 	cout << "entering PauseState" << endl;
 	return true;
@@ -82,16 +90,19 @@ void PauseState::ResumePlay()
 
 void PauseState::SetCallbacks(const vector<Callback>& callbacks_)
 {
-	// Loop through all the created game objects
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (!gameObjects.empty())
 	{
-		// If they are of type MenuButton, assign the callback based on the ID passed in the file
-		if (dynamic_cast<MenuButton*>(gameObjects[i]))
+		// Loop through all the created game objects
+		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
+			// If they are of type MenuButton, assign the callback based on the ID passed in the file
+			if (dynamic_cast<MenuButton*>(gameObjects[i]))
+			{
+				MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
 
-			// Use the object's callbackID as the index into the callbacks vector and assign the correct function
-			menuButton->SetCallback(callbacks[menuButton->GetCallbackID()]);
+				// Use the object's callbackID as the index into the callbacks vector and assign the correct function
+				menuButton->SetCallback(callbacks_[menuButton->GetCallbackID()]);
+			}
 		}
 	}
 }

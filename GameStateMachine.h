@@ -17,12 +17,18 @@
 class GameStateMachine
 {
 public:
+	GameStateMachine() {}
+	~GameStateMachine() {}
+
 	void PushState(GameState* gameState_);
 	void ChangeState(GameState* gameState_);
 	void PopState();
 
 	void Update();
 	void Render();
+	void Clean();
+
+	vector<GameState*>& GetGameStates() { return gameStates; }
 
 private:
 	// A vector of GameState pointer is needed to store the states

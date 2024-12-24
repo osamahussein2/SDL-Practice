@@ -88,7 +88,8 @@ void StateParser::ParseObjects(TiXmlElement* stateRoot_, vector<GameObject*> *ga
 
 		// Pass in the value from the type attribute and use that to create the correct object from the factory
 		GameObject* gameObject = TheGameObjectFactory::Instance()->Create(element->Attribute("type"));
-		gameObject->LoadGameObject(new LoaderParams(x, y, width, height, textureID, callbackID, animationSpeed));
+		gameObject->LoadGameObject(unique_ptr<LoaderParams>(new LoaderParams(x, y, width, height, textureID,
+			numberOfFrames, callbackID, animationSpeed)));
 
 		// Push the local game object into the array of game objects passed into the parameter
 		gameObjects_->push_back(gameObject);

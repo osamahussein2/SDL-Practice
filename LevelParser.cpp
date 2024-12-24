@@ -1,3 +1,4 @@
+#include <string>
 #include "LevelParser.h"
 #include "TextureManager.h"
 #include "Window.h"
@@ -6,6 +7,7 @@
 #include "GameObjectFactory.h"
 #include "base64.h"
 #include <zlib.h>
+#include "Level.h"
 
 typedef TextureManager TheTextureManager;
 typedef Window TheWindow;
@@ -75,7 +77,7 @@ Level* LevelParser::ParseLevel(const char* levelFile_)
 
 			else if (element->FirstChildElement()->Value() == string("data"))
 			{
-				ParseTileLayer(element, level->GetLayers(), level->GetTilesets());
+				ParseTileLayer(element, level->GetLayers(), level->GetTilesets(), level->GetCollisionLayers());
 			}
 		}
 	}
@@ -109,8 +111,12 @@ void LevelParser::ParseTilesets(TiXmlElement* tilesetRoot_, vector<Tileset>* til
 	tilesets_->push_back(tileset);
 }
 
-void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* layers_, const vector<Tileset>* tilesets_)
+void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* layers_, const vector<Tileset>* tilesets_,
+	vector<TileLayer*>* collisionLayers_)
 {
+	// Local temporary variable
+	bool collidable = false;
+
 	// Create a new instance of TileLayer
 	TileLayer* tileLayer = new TileLayer(tileSize, *tilesets_);
 
@@ -124,6 +130,21 @@ void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* lay
 	for (TiXmlElement* element = tileElement_->FirstChildElement(); element != NULL; 
 		element = element->NextSiblingElement())
 	{
+		if (element->Value() == string("properties"))
+		{
+			for (TiXmlElement* property = element->FirstChildElement(); property != NULL;
+				property = property->NextSiblingElement())
+			{
+				if (property->Value() == string("property"))
+				{
+					if (property->Attribute("name") == string("collidable"))
+					{
+						collidable = true;
+					}
+				}
+			}
+		}
+
 		// Search for the data node
 		if (element->Value() == string("data"))
 		{
@@ -174,6 +195,13 @@ void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* lay
 
 	// Set the layer's tile data and then push the layer into the layers array of our Level
 	tileLayer->SetTileIDs(tileData);
+
+	// Push into collision array if necessary
+	if (collidable)
+	{
+		collisionLayers_->push_back(tileLayer);
+	}
+
 	layers_->push_back(tileLayer);
 }
 
@@ -250,7 +278,14 @@ void LevelParser::ParseObjectLayer(TiXmlElement* objectElement_, vector<Layer*>*
 			}
 
 			// Create the game object and add it to object layer's game object array
-			gameObject->LoadGameObject(new LoaderParams(x, y, width, height, textureID, callbackID, animationSpeed));
+			gameObject->LoadGameObject(unique_ptr<LoaderParams>(new LoaderParams(x, y, width, height, textureID, 
+				numberOfFrames, callbackID, animationSpeed)));
+
+			if (gameObject->Type() == "Player")
+			{
+				level->SetPlayer(dynamic_cast<Player*>(gameObject));
+			}
+
 			objectLayer->GetGameObjects()->push_back(gameObject);
 		}
 	}

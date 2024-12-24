@@ -17,11 +17,15 @@ typedef TextureManager TheTextureManager;
 class GameState
 {
 public:
+	virtual ~GameState() {}
+
 	virtual void Update() = 0;
 	virtual void Render() = 0;
 
 	virtual bool OnEnter() = 0;
 	virtual bool OnExit() = 0;
+
+	virtual void Resume() {}
 
 	virtual void ClearTextures()
 	{
@@ -35,5 +39,12 @@ public:
 	virtual string GetStateID() const = 0;
 
 protected:
+	GameState() : loadingComplete(false), exiting(false)
+	{
+
+	}
+
+	bool loadingComplete, exiting;
+
 	vector<string> textureIDList;
 };

@@ -67,6 +67,9 @@ public:
 
 private:
 
+	GameObjectFactory() {}
+	~GameObjectFactory() {}
+
 	/* This map holds the important elements of our factory, the functions of the class essentially either add or remove
 	from this map. */
 	map<string, BaseCreator*> baseCreator;

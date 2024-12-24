@@ -1,12 +1,12 @@
 #include "AnimatedGraphic.h"
 
-AnimatedGraphic::AnimatedGraphic() : SDLGameObject()
+AnimatedGraphic::AnimatedGraphic() : ShooterObject()
 {
 }
 
 void AnimatedGraphic::Draw()
 {
-	SDLGameObject::Draw();
+	ShooterObject::Draw();
 }
 
 void AnimatedGraphic::Update()
@@ -21,9 +21,9 @@ void AnimatedGraphic::Clean()
 {
 }
 
-void AnimatedGraphic::LoadGameObject(const LoaderParams* loaderParams_)
+void AnimatedGraphic::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
 {
-	SDLGameObject::LoadGameObject(loaderParams_);
+	ShooterObject::LoadGameObject(loaderParams_);
 
 	animationSpeed = loaderParams_->GetAnimationSpeed();
 }

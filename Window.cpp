@@ -4,8 +4,11 @@
 #include "MenuState.h"
 #include "PlayState.h"
 #include "GameObjectFactory.h"
+#include "GameOverState.h"
 #include "MenuButton.h"
+#include "ScrollingBackground.h"
 #include "AnimatedGraphic.h"
+#include "SoundManager.h"
 
 typedef GameObjectFactory TheGameObjectFactory;
 
@@ -89,6 +92,17 @@ Window::Window()
 
 	windowWidth = 0;
 	windowHeight = 0;
+
+	playerLives = 3;
+	scrollSpeed = 0.8;
+
+	levelComplete = false;
+	changingState = false;
+
+	levelFiles.push_back("Sprites/Map1.tmx");
+	levelFiles.push_back("Sprites/Map2.tmx");
+
+	currentLevel = 1; // Start at the first level
 }
 
 // Use this deconstructor to tell SDL when we should close the window by itself
@@ -97,6 +111,10 @@ Window::~Window()
 	flags = 0;
 
 	currentFrame = 0;
+
+	// Prevent memory leaks
+	gameRenderer = 0;
+	gameWindow = 0;
 }
 
 Window* Window::WindowInstance()
@@ -148,16 +166,33 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				// Make the SDL window red
 				SDL_SetRenderDrawColor(gameRenderer, 0, 200, 255, 255);
 
+				//TheSoundManager::Instance()->LoadAudio("Sprites/DST_ElectroRock.ogg", "music1", SOUND_MUSIC);
+				//TheSoundManager::Instance()->LoadAudio("Sprites/boom.wav", "explode", SOUND_SFX);
+				//TheSoundManager::Instance()->LoadAudio("Sprites/phaser.wav", "shoot", SOUND_SFX);
+
+				//TheSoundManager::Instance()->PlayMusic("music1", -1);
+
 				TheInputHandler::InputHandlerInstance()->InitializeJoysticks();
 
 				TheGameObjectFactory::Instance()->RegisterType("MenuButton", new MenuButtonCreator());
 				TheGameObjectFactory::Instance()->RegisterType("Player", new PlayerCreator());
-				TheGameObjectFactory::Instance()->RegisterType("Enemy", new EnemyCreator());
 				TheGameObjectFactory::Instance()->RegisterType("AnimatedGraphic", new AnimatedGraphicCreator());
+				TheGameObjectFactory::Instance()->RegisterType("ScrollingBackground", new ScrollingBackgroundCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("Turret", new TurretCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("Glider", new GliderCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("ShotGlider", new ShotGliderCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("RoofTurret", new RoofTurretCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("Eskeletor", new EskeletorCreator());
+				//TheGameObjectFactory::Instance()->RegisterType("Level1Boss", new Level1BossCreator());
+
+				//TheGameObjectFactory::Instance()->RegisterType("Enemy", new EnemyCreator());
 
 				// Create the game state machine object and set the first state after the render is successful
 				gameStateMachine = new GameStateMachine();
 				gameStateMachine->ChangeState(new MainMenuState());
+
+				// Set isRunning to true after the SDL window and render creation
+				isRunning = true;
 
 				// Load the texture before loading the game objects
 				//TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Animate-alpha.png",
@@ -173,9 +208,6 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				isRunning = false;
 			}
 		}
-		
-		// Set isRunning to true after the SDL window and render creation
-		isRunning = true;
 	}
 
 	else if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -262,8 +294,14 @@ void Window::RenderSDL()
 		SDL_DestroyWindow(gameWindow);
 		SDL_DestroyRenderer(gameRenderer);
 
+		gameStateMachine->Clean();
+
+		gameStateMachine = 0;
+		delete gameStateMachine;
+
 		// Clean the window up after SDL quits
 		Window::~Window();
+		TheTextureManager::TextureManagerInstance()->ClearTextureMap();
 		TheTextureManager::TextureManagerInstance()->~TextureManager();
 		TheInputHandler::InputHandlerInstance()->CleanInputHandler();
 
@@ -303,4 +341,66 @@ int Window::GetWindowWidth() const
 int Window::GetWindowHeight() const
 {
 	return windowHeight;
+}
+
+int Window::GetPlayerLives()
+{
+	return playerLives;
+}
+
+void Window::SetPlayerLives(int playerLives_)
+{
+	playerLives = playerLives_;
+}
+
+int Window::GetCurrentLevel()
+{
+	return currentLevel;
+}
+
+void Window::SetCurrentLevel(int currentLevel_)
+{
+	currentLevel = currentLevel_;
+	gameStateMachine->ChangeState(new GameOverState());
+	levelComplete = false;
+}
+
+const int Window::GetNextLevel()
+{
+	return nextLevel;
+}
+
+void Window::SetNextLevel(int nextLevel_)
+{
+	nextLevel = nextLevel_;
+}
+
+bool Window::GetLevelComplete()
+{
+	return levelComplete;
+}
+
+void Window::SetLevelComplete(bool levelComplete_)
+{
+	levelComplete = levelComplete_;
+}
+
+float Window::GetScrollSpeed()
+{
+	return scrollSpeed;
+}
+
+bool Window::ChangingState()
+{
+	return changingState;
+}
+
+void Window::ChangingState(bool changingState_)
+{
+	changingState = changingState_;
+}
+
+vector<string> Window::GetLevelFiles()
+{
+	return levelFiles;
 }

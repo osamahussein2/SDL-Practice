@@ -72,7 +72,7 @@ void TextureManager::DrawTexture(string ID_, int x_, int y_, int width_, int hei
 }
 
 void TextureManager::DrawFrame(string ID_, int x_, int y_, int width_, int height_, int currentRow_, int currentFrame_,
-	SDL_Renderer* rend_, SDL_RendererFlip flip_)
+	SDL_Renderer* rend_, double angle_, int alpha_, SDL_RendererFlip flip_)
 {
 	srcRectangle.x = width_ * currentFrame_;
 	srcRectangle.y = height_ * currentRow_;
@@ -87,7 +87,10 @@ void TextureManager::DrawFrame(string ID_, int x_, int y_, int width_, int heigh
 
 	//SDL_RenderCopy(gameRenderer, spriteTexture, 0, 0); // Render the entire texture
 
-	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRectangle, &destRectangle, 0, 0, flip_);
+	// Set the alpha of the texture
+	SDL_SetTextureAlphaMod(textureMap[ID_], alpha_);
+
+	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRectangle, &destRectangle, angle_, 0, flip_);
 }
 
 void TextureManager::DrawTile(string ID_, int margin_, int spacing_, int x_, int y_, int width_, int height_, 
@@ -106,7 +109,17 @@ void TextureManager::DrawTile(string ID_, int margin_, int spacing_, int x_, int
 	SDL_RenderCopyEx(rend_, textureMap[ID_], &srcRect, &destRect, 0, 0, SDL_FLIP_NONE);
 }
 
+void TextureManager::ClearTextureMap()
+{
+	textureMap.clear();
+}
+
 void TextureManager::ClearFromTextureMap(string ID_)
 {
 	textureMap.erase(ID_);
+}
+
+map<string, SDL_Texture*> TextureManager::GetTextureMap()
+{
+	return textureMap;
 }

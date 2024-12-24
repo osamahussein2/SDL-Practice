@@ -5,6 +5,8 @@
 #include "GameOverState.h"
 #include "StateParser.h"
 #include "LevelParser.h"
+#include "Window.h"
+#include "BulletHandler.h"
 
 const string PlayState::playID = "PLAY";
 
@@ -14,19 +16,32 @@ typedef Window TheWindow;
 
 void PlayState::Update()
 {
-	if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_ESCAPE))
+	if (loadingComplete && !exiting)
 	{
-		// Push the pause state into the game state when pressing the ESCAPE key
-		// PushState doesn't remove the old state but merely stops using it and uses the new state
-		TheWindow::WindowInstance()->GetGameStateMachine()->PushState(new PauseState());
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_ESCAPE))
+		{
+			// Push the pause state into the game state when pressing the ESCAPE key
+			// PushState doesn't remove the old state but merely stops using it and uses the new state
+			TheWindow::WindowInstance()->GetGameStateMachine()->PushState(new PauseState());
+		}
+
+		TheBulletHandler::Instance()->UpdateBullets();
+
+		if (TheWindow::WindowInstance()->GetPlayerLives() == 0)
+		{
+			TheWindow::WindowInstance()->GetGameStateMachine()->ChangeState(new GameOverState());
+		}
+
+		if (level != 0)
+		{
+			level->Update();
+		}
 	}
 
 	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Update();
 	}*/
-
-	level->Update();
 
 	// We have to use a dynamic cast object to cast our GameObject* class to an SDLGameObject* class
 	/*if (CheckCollision(dynamic_cast<SDLGameObject*>(gameObjects[0]), dynamic_cast<SDLGameObject*>(gameObjects[1])))
@@ -38,20 +53,49 @@ void PlayState::Update()
 
 void PlayState::Render()
 {
+	if (loadingComplete)
+	{
+		if (level != 0)
+		{
+			level->Render();
+		}
+
+		for (int i = 0; i < TheWindow::WindowInstance()->GetPlayerLives(); i++)
+		{
+			TheTextureManager::TextureManagerInstance()->DrawFrame("lives", i * 30, 0, 32, 30, 0, 0,
+				TheWindow::WindowInstance()->GetRenderer(), 0.0, 255, SDL_FLIP_NONE);
+		}
+
+		TheBulletHandler::Instance()->DrawBullets();
+	}
+
 	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Draw();
 	}*/
-
-	level->Render();
 }
 
 bool PlayState::OnEnter()
 {
-	LevelParser levelParser;
+	TheWindow::WindowInstance()->SetPlayerLives(3);
 
-	// Parse the current level along with the XML file
-	level = levelParser.ParseLevel("Sprites/Map1.tmx");
+	LevelParser levelParser;
+	level = levelParser.ParseLevel(TheWindow::WindowInstance()->GetLevelFiles()
+		[TheWindow::WindowInstance()->GetCurrentLevel() - 1].c_str());
+
+	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet1.png", "bullet1", 
+		TheWindow::WindowInstance()->GetRenderer());
+	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet2.png", "bullet2", 
+		TheWindow::WindowInstance()->GetRenderer());
+	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet3.png", "bullet3", 
+		TheWindow::WindowInstance()->GetRenderer());
+	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/lives.png", "lives", 
+		TheWindow::WindowInstance()->GetRenderer());
+
+	if (level != 0)
+	{
+		loadingComplete = true;
+	}
 
 	cout << "entering PlayState" << endl;
 	return true;
@@ -68,6 +112,11 @@ bool PlayState::OnExit()
 
 	GameState::ClearTextures();*/
 
+	exiting = true;
+
+	TheInputHandler::InputHandlerInstance()->Reset();
+	TheBulletHandler::Instance()->ClearBullets();
+
 	cout << "exiting PlayState" << endl;
 	return true;
 }
@@ -75,29 +124,4 @@ bool PlayState::OnExit()
 string PlayState::GetStateID() const
 {
 	return playID;
-}
-
-bool PlayState::CheckCollision(SDLGameObject* p1, SDLGameObject* p2)
-{
-	int LeftA, LeftB;
-	int RightA, RightB;
-	int TopA, TopB;
-	int BottomA, BottomB;
-
-	LeftA = p1->GetPosition().GetX();
-	RightA = p1->GetPosition().GetX() + p1->GetWidth();
-	TopA = p1->GetPosition().GetY();
-	BottomA = p1->GetPosition().GetY() + p1->GetHeight();
-
-	LeftB = p2->GetPosition().GetX();
-	RightB = p2->GetPosition().GetX() + p2->GetWidth();
-	TopB = p2->GetPosition().GetY();
-	BottomB = p2->GetPosition().GetY() + p2->GetHeight();
-
-	if (BottomA <= TopB) { return false; }
-	if (TopA >= BottomB) { return false; }
-	if (RightA <= LeftB) { return false; }
-	if (LeftA >= RightB) { return false; }
-
-	return true;
 }

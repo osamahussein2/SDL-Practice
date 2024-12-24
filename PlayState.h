@@ -2,10 +2,10 @@
 
 #include <iostream>
 #include "GameState.h"
-#include "SDLGameObject.h"
+#include "ShooterObject.h"
 #include "TextureManager.h"
-#include "Window.h"
 #include "Level.h"
+#include "CollisionManager.h"
 
 class GameObject;
 
@@ -20,12 +20,12 @@ public:
 
 	virtual string GetStateID() const;
 
-	bool CheckCollision(SDLGameObject* p1, SDLGameObject* p2);
-
 private:
 	static const string playID;
 
 	vector<GameObject*> gameObjects;
+
+	CollisionManager collisionManager;
 
 	Level* level;
 };

@@ -1,26 +1,47 @@
 #include "MenuState.h"
 #include "MenuButton.h"
 #include "PlayState.h"
+#include "InputHandler.h"
 #include "StateParser.h"
 
 const string MainMenuState::menuID = "MENU";
 
 typedef TextureManager TheTextureManager;
+typedef InputHandler TheInputHandler;
 typedef Window TheWindow;
 
 void MainMenuState::Update()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_SPACE))
+	{
+		MenuToPlay();
+	}
+
+	if (!gameObjects.empty())
+	{
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			if (gameObjects[i] != 0)
+			{
+				gameObjects[i]->Update();
+			}
+		}
+	}
+
+	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->Update();
-	}
+	}*/
 }
 
 void MainMenuState::Render()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Draw();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Draw();
+		}
 	}
 }
 
@@ -29,7 +50,7 @@ bool MainMenuState::OnEnter()
 	StateParser stateParser;
 
 	// Parse the current state along with the XML file
-	stateParser.ParseState("test.xml", menuID, &gameObjects, &textureIDList);
+	stateParser.ParseState("Attack.xml", menuID, &gameObjects, &textureIDList);
 
 	// Push callbacks into the array inherited from MenuState
 
@@ -40,20 +61,27 @@ bool MainMenuState::OnEnter()
 	// Set the callbacks for menu items
 	SetCallbacks(callbacks);
 
+	loadingComplete = true;
+
 	cout << "entering MenuState" << endl;
 	return true;
 }
 
 bool MainMenuState::OnExit()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	exiting = true;
+
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Clean();
+		gameObjects.back()->Clean();
+		gameObjects.pop_back();
 	}
 
 	gameObjects.clear();
 
 	GameState::ClearTextures();
+	
+	TheInputHandler::InputHandlerInstance()->Reset();
 
 	cout << "exiting MenuState" << endl;
 	return true;
@@ -66,18 +94,22 @@ string MainMenuState::GetStateID() const
 
 void MainMenuState::SetCallbacks(const vector<Callback>& callbacks_)
 {
-	// Loop through all the created game objects
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (!gameObjects.empty())
 	{
-		// If they are of type MenuButton, assign the callback based on the ID passed in the file
-		if (dynamic_cast<MenuButton*>(gameObjects[i]))
+		// Loop through all the created game objects
+		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
+			// If they are of type MenuButton, assign the callback based on the ID passed in the file
+			if (dynamic_cast<MenuButton*>(gameObjects[i]))
+			{
+				MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
 
-			// Use the object's callbackID as the index into the callbacks vector and assign the correct function
-			menuButton->SetCallback(callbacks[menuButton->GetCallbackID()]);
+				// Use the object's callbackID as the index into the callbacks vector and assign the correct function
+				menuButton->SetCallback(callbacks_[menuButton->GetCallbackID()]);
+			}
 		}
 	}
+
 }
 
 void MainMenuState::MenuToPlay()

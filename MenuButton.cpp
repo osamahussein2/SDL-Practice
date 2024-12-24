@@ -2,7 +2,7 @@
 
 typedef InputHandler TheInputHandler;
 
-MenuButton::MenuButton() : SDLGameObject()
+MenuButton::MenuButton() : ShooterObject(), callbackFunction(0), released(true)
 {
 	// Start at frame 0
 	currentFrame = MOUSE_OUT;
@@ -10,7 +10,7 @@ MenuButton::MenuButton() : SDLGameObject()
 
 void MenuButton::Draw()
 {
-	SDLGameObject::Draw();
+	ShooterObject::Draw();
 }
 
 void MenuButton::Update()
@@ -33,7 +33,10 @@ void MenuButton::Update()
 		{
 			currentFrame = CLICKED;
 
-			callbackFunction();
+			if (callbackFunction != 0)
+			{
+				callbackFunction();
+			}
 
 			released = false;
 		}
@@ -55,12 +58,12 @@ void MenuButton::Update()
 
 void MenuButton::Clean()
 {
-	SDLGameObject::Clean();
+	ShooterObject::Clean();
 }
 
-void MenuButton::LoadGameObject(const LoaderParams* loaderParams_)
+void MenuButton::LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_)
 {
-	SDLGameObject::LoadGameObject(loaderParams_);
+	ShooterObject::LoadGameObject(loaderParams_);
 
 	callbackID = loaderParams_->GetCallbackID();
 	currentFrame = MOUSE_OUT;
@@ -71,7 +74,7 @@ int MenuButton::GetCallbackID()
 	return callbackID;
 }
 
-void MenuButton::SetCallback(void(*callback)())
+void MenuButton::SetCallback(void(*callback_)())
 {
-	callbackFunction = callback;
+	callbackFunction = callback_;
 }

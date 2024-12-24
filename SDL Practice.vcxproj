@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GameDev\SDL2_mixer-2.8.0\include;C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\GameDev\zlib-1.3.1\lib32;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GameDev\SDL2_mixer-2.8.0\include;C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
@@ -126,7 +126,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;x64\SDL2_image.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;x64\SDL2_image.lib;zdll.lib;x64\SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;MP3_MUSIC_DISABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -143,12 +143,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;x64\SDL2_image.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>x64\SDL2.lib;x64\SDL2main.lib;x64\SDL2_image.lib;zdll.lib;x64\SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimatedGraphic.cpp" />
     <ClCompile Include="base64.cpp" />
+    <ClCompile Include="BulletHandler.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
@@ -165,7 +167,9 @@
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayState.cpp" />
-    <ClCompile Include="SDLGameObject.cpp" />
+    <ClCompile Include="ScrollingBackground.cpp" />
+    <ClCompile Include="ShooterObject.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StateParser.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileLayer.cpp" />
@@ -181,6 +185,10 @@
     <ClInclude Include="..\..\..\..\GameDev\tinyxml_2_6_2\tinyxml\tinyxml.h" />
     <ClInclude Include="AnimatedGraphic.h" />
     <ClInclude Include="base64.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletHandler.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectFactory.h" />
@@ -198,7 +206,9 @@
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayState.h" />
-    <ClInclude Include="SDLGameObject.h" />
+    <ClInclude Include="ScrollingBackground.h" />
+    <ClInclude Include="ShooterObject.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StateParser.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TileLayer.h" />
@@ -206,6 +216,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="Attack.xml" />
     <Xml Include="test.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

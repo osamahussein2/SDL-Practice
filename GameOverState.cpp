@@ -1,6 +1,7 @@
 #include "GameOverState.h"
 #include "PlayState.h"
 #include "StateParser.h"
+#include "MenuButton.h"
 
 const string GameOverState::gameOverID = "GAMEOVER";
 
@@ -10,17 +11,23 @@ typedef Window TheWindow;
 
 void GameOverState::Update()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Update();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Update();
+		}
 	}
 }
 
 void GameOverState::Render()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Draw();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Update();
+		}
 	}
 }
 
@@ -29,13 +36,15 @@ bool GameOverState::OnEnter()
 	StateParser stateParser;
 
 	// Parse the current state along with the XML file
-	stateParser.ParseState("test.xml", gameOverID, &gameObjects, &textureIDList);
+	stateParser.ParseState("Attack.xml", gameOverID, &gameObjects, &textureIDList);
 
 	// Push callbacks into the array inherited from MenuState
 
 	callbacks.push_back(0); // Push back 0 since callbackID start from 1
 	callbacks.push_back(GameOverToMain);
 	callbacks.push_back(RestartPlay);
+
+	loadingComplete = true;
 
 	// Set the callbacks for menu items
 	SetCallbacks(callbacks);
@@ -54,6 +63,8 @@ bool GameOverState::OnExit()
 	gameObjects.clear();
 
 	GameState::ClearTextures();
+
+	TheInputHandler::InputHandlerInstance()->Reset();
 
 	cout << "exiting GameOverState" << endl;
 	return true;
@@ -85,7 +96,7 @@ void GameOverState::SetCallbacks(const vector<Callback>& callbacks_)
 			MenuButton* menuButton = dynamic_cast<MenuButton*>(gameObjects[i]);
 
 			// Use the object's callbackID as the index into the callbacks vector and assign the correct function
-			menuButton->SetCallback(callbacks[menuButton->GetCallbackID()]);
+			menuButton->SetCallback(callbacks_[menuButton->GetCallbackID()]);
 		}
 	}
 }

@@ -1,10 +1,11 @@
 #pragma once
 
-#include "SDLGameObject.h"
-#include "InputHandler.h"
+#include <iostream>
+#include <vector>
+#include "ShooterObject.h"
 #include "GameObjectFactory.h"
 
-class Player : public SDLGameObject
+class Player : public ShooterObject
 {
 public:
 	Player();
@@ -13,10 +14,21 @@ public:
 	virtual void Update();
 	virtual void Clean();
 
-	virtual void LoadGameObject(const LoaderParams* loaderParams_);
+	virtual void LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_);
 
 private:
+
+	// Bring the player back if there are lives left
+	void Ressurect();
+
+	// Handle any input from the keyboard, mouse, or joystick
 	void HandleInput();
+
+	// Handle any animation for the player
+	void HandleAnimation();
+
+	// Player can be invulnerable for a time
+	int invulnerable, invulnerableTime, invulnerableCounter;
 };
 
 class PlayerCreator : public BaseCreator

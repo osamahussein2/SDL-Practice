@@ -22,8 +22,6 @@ using namespace std;
 class Window
 {
 public:
-	~Window();
-	
 	static Window* WindowInstance();
 
 	bool InitializeSDL(const char* title, int x, int y, int width, int height, bool fullscreen);
@@ -38,9 +36,32 @@ public:
 	int GetWindowWidth() const;
 	int GetWindowHeight() const;
 
+	int GetPlayerLives();
+	void SetPlayerLives(int playerLives_);
+
+	int GetCurrentLevel();
+	void SetCurrentLevel(int currentLevel_);
+
+	const int GetNextLevel();
+	void SetNextLevel(int nextLevel_);
+
+	bool GetLevelComplete();
+	void SetLevelComplete(bool levelComplete_);
+
+	float GetScrollSpeed();
+
+	bool ChangingState();
+	void ChangingState(bool chaningState_);
+
+	vector<string> GetLevelFiles();
+
 	bool isRunning;
 private:
 	Window();
+	~Window();
+
+	Window(const Window&);
+	Window& operator=(const Window&);
 
 	SDL_Window* gameWindow;
 	SDL_Renderer* gameRenderer;
@@ -48,6 +69,10 @@ private:
 	int flags;
 
 	int currentFrame;
+
+	float scrollSpeed;
+
+	int playerLives;
 
 	typedef TextureManager TheTextureManager;
 
@@ -63,6 +88,13 @@ private:
 	GameStateMachine* gameStateMachine;
 
 	int windowWidth, windowHeight;
+	int currentLevel, nextLevel;
+
+	bool levelComplete;
+
+	vector<string> levelFiles;
+
+	bool changingState;
 };
 
 #endif /* defined(WINDOW_H) */

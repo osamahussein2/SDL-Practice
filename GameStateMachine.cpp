@@ -47,6 +47,8 @@ void GameStateMachine::PopState()
 			delete gameStates.back();
 			gameStates.pop_back();
 		}
+
+		gameStates.back()->Resume();
 	}
 }
 
@@ -67,5 +69,16 @@ void GameStateMachine::Render()
 	if (!gameStates.empty())
 	{
 		gameStates.back()->Render();
+	}
+}
+
+void GameStateMachine::Clean()
+{
+	if (!gameStates.empty())
+	{
+		gameStates.back()->OnExit();
+
+		delete gameStates.back();
+		gameStates.clear();
 	}
 }

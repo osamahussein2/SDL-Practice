@@ -1,19 +1,21 @@
 #pragma once
 
-#include "SDLGameObject.h"
+#include "ShooterObject.h"
 #include "InputHandler.h"
 #include "GameObjectFactory.h"
 
-class MenuButton : public SDLGameObject
+class MenuButton : public ShooterObject
 {
 public:
 	MenuButton();
+
+	virtual ~MenuButton() {}
 
 	virtual void Draw();
 	virtual void Update();
 	virtual void Clean();
 
-	virtual void LoadGameObject(const LoaderParams* loaderParams_);
+	virtual void LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_);
 
 	int GetCallbackID();
 	void SetCallback(void(*callback)());
@@ -28,6 +30,8 @@ private:
 	};
 
 	void (*callbackFunction)();
+
+	int callbackID;
 
 	bool released;
 };

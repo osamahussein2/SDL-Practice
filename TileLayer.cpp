@@ -12,10 +12,18 @@ position(0, 0), velocity(0, 0)
 	numberOfRows = TheWindow::WindowInstance()->GetWindowHeight() / tileSize;
 }
 
-void TileLayer::Update()
+void TileLayer::Update(Level* level_)
 {
-	position += velocity;
-	velocity.SetX(1);
+	if (position.GetX() < ((mapWidth * tileSize) - TheWindow::WindowInstance()->GetWindowWidth()) - tileSize)
+	{
+		velocity.SetX(TheWindow::WindowInstance()->GetScrollSpeed());
+		position += velocity;
+
+	}
+	else
+	{
+		velocity.SetX(0);
+	}
 }
 
 void TileLayer::Render()
@@ -64,9 +72,24 @@ void TileLayer::Render()
 	}
 }
 
+const vector<vector<int>>& TileLayer::GetTileIDs()
+{
+	return tileIDs;
+}
+
 void TileLayer::SetTileIDs(const vector<vector<int>>& data_)
 {
 	tileIDs = data_;
+}
+
+void TileLayer::SetMapWidth(int mapWidth_)
+{
+	mapWidth = mapWidth_;
+}
+
+int TileLayer::GetTileSize()
+{
+	return tileSize;
 }
 
 void TileLayer::SetTileSize(int tileSize_)
@@ -96,4 +119,9 @@ Tileset TileLayer::GetTilesetByID(int tileID_)
 
 	Tileset t;
 	return t;
+}
+
+const Vector2 TileLayer::GetPosition()
+{
+	return position;
 }
