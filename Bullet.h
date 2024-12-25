@@ -1,14 +1,14 @@
 #pragma once
 
-#include "ShooterObject.h"
-#include "TextureManager.h"
-#include "Window.h"
-#include <iostream>
+//#include "PlatformerObject.h"
+//#include "TextureManager.h"
+//#include "Window.h"
+//#include <iostream>
 
-class PlayerBullet : public ShooterObject
+/*class PlayerBullet : public PlatformerObject
 {
 public:
-	PlayerBullet() : ShooterObject(), heading(0, 0)
+	PlayerBullet() : PlatformerObject(), heading(0, 0)
 	{
 		dyingTime = 5;
 	}
@@ -19,14 +19,14 @@ public:
 
 	virtual void LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_, Vector2 heading_)
 	{
-		ShooterObject::LoadGameObject(move(loaderParams_));
+		PlatformerObject::LoadGameObject(move(loaderParams_));
 
 		heading = heading_;
 	}
 
 	virtual void Draw()
 	{
-		ShooterObject::Draw();
+		PlatformerObject::Draw();
 	}
 
 	virtual void Collision()
@@ -46,7 +46,7 @@ public:
 			velocity.SetX(heading.GetX());
 			velocity.SetY(heading.GetY());
 
-			ShooterObject::Update();
+			PlatformerObject::Update();
 		}
 
 		else
@@ -60,7 +60,7 @@ public:
 
 	virtual void Clean()
 	{
-		ShooterObject::Clean();
+		PlatformerObject::Clean();
 	}
 
 private:
@@ -78,4 +78,4 @@ public:
 	virtual ~EnemyBullet() {}
 
 	virtual string Type() { return "EnemyBullet"; }
-};
+}; */

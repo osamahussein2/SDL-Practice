@@ -5,6 +5,12 @@
 class Vector2
 {
 public:
+	Vector2()
+	{
+		x = 0;
+		y = 0;
+	}
+
 	Vector2(float x_, float y_);
 
 	float GetX();
@@ -29,6 +35,5 @@ public:
 
 	void Normalize();
 
-private:
 	float x, y;
 };

@@ -23,7 +23,7 @@ void PlayState::Update()
 			TheWindow::WindowInstance()->GetGameStateMachine()->PushState(new PauseState());
 		}
 
-		TheBulletHandler::Instance()->UpdateBullets();
+		//TheBulletHandler::Instance()->UpdateBullets();
 
 		if (TheWindow::WindowInstance()->GetPlayerLives() == 0)
 		{
@@ -64,7 +64,7 @@ void PlayState::Render()
 				TheWindow::WindowInstance()->GetRenderer(), 0.0, 255, SDL_FLIP_NONE);
 		}
 
-		TheBulletHandler::Instance()->DrawBullets();
+		//TheBulletHandler::Instance()->DrawBullets();
 	}
 
 	/*for (int i = 0; i < gameObjects.size(); i++)
@@ -113,7 +113,7 @@ bool PlayState::OnExit()
 	exiting = true;
 
 	TheInputHandler::InputHandlerInstance()->Reset();
-	TheBulletHandler::Instance()->ClearBullets();
+	//TheBulletHandler::Instance()->ClearBullets();
 
 	cout << "exiting PlayState" << endl;
 	return true;

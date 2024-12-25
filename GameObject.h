@@ -2,8 +2,13 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 #include "LoaderParams.h"
 #include "Vector2.h"
+
+class TileLayer;
+
+using namespace std;
 
 class GameObject
 {
@@ -53,6 +58,8 @@ public:
 
 	void SetUpdating(bool isUpdating_) { isUpdating = isUpdating_; }
 
+	void SetCollisionLayers(vector<TileLayer*>* layers_) { collisionLayers = layers_; }
+
 protected:
 	GameObject() : position(0, 0), velocity(0, 0), acceleration(0, 0), width(0), height(0), currentRow(0), currentFrame(0),
 	isUpdating(false), isDead(false), isDying(false), angle(0), alpha(255) {}
@@ -75,4 +82,6 @@ protected:
 
 	// Blending
 	int alpha;
+
+	vector<TileLayer*>* collisionLayers;
 };

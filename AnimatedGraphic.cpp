@@ -1,12 +1,12 @@
 #include "AnimatedGraphic.h"
 
-AnimatedGraphic::AnimatedGraphic() : ShooterObject()
+AnimatedGraphic::AnimatedGraphic() : PlatformerObject()
 {
 }
 
 void AnimatedGraphic::Draw()
 {
-	ShooterObject::Draw();
+	PlatformerObject::Draw();
 }
 
 void AnimatedGraphic::Update()
@@ -19,12 +19,12 @@ void AnimatedGraphic::Update()
 
 void AnimatedGraphic::Clean()
 {
-	ShooterObject::Clean();
+	PlatformerObject::Clean();
 }
 
 void AnimatedGraphic::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
 {
-	ShooterObject::LoadGameObject(loaderParams_);
+	PlatformerObject::LoadGameObject(loaderParams_);
 
 	animationSpeed = loaderParams_->GetAnimationSpeed();
 }

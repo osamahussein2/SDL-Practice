@@ -1,10 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include "ShooterObject.h"
+#include "PlatformerObject.h"
 #include "GameObjectFactory.h"
 
-class ScrollingBackground : public ShooterObject
+class ScrollingBackground : public PlatformerObject
 {
 public:
 	virtual ~ScrollingBackground() {}

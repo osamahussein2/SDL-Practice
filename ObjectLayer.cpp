@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Vector2.h"
 #include "Window.h"
+#include "Camera.h"
 #include "Level.h"
 
 ObjectLayer::~ObjectLayer()
@@ -16,22 +17,23 @@ ObjectLayer::~ObjectLayer()
 
 void ObjectLayer::Update(Level* level_)
 {
-    collisionManager.CheckPlayerEnemyBulletCollision(level_->GetPlayer());
-    collisionManager.CheckEnemyPlayerBulletCollision((const vector<GameObject*>&) gameObjects);
+    //collisionManager.CheckPlayerEnemyBulletCollision(level_->GetPlayer());
+    //collisionManager.CheckEnemyPlayerBulletCollision((const vector<GameObject*>&) gameObjects);
     collisionManager.CheckPlayerEnemyCollision(level_->GetPlayer(), (const vector<GameObject*>&) gameObjects);
 
-    if (level_->GetPlayer()->GetPosition().GetX() + level_->GetPlayer()->GetWidth() < 
+    /*if (level_->GetPlayer()->GetPosition().GetX() + level_->GetPlayer()->GetWidth() <
         TheWindow::WindowInstance()->GetWindowWidth())
     {
         collisionManager.CheckPlayerTileCollision(level_->GetPlayer(), level_->GetCollidableLayers());
-    }
+    }*/
 
     // Iterate through the objects
     if (!gameObjects.empty())
     {
         for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end();)
         {
-            if ((*it)->GetPosition().GetX() <= TheWindow::WindowInstance()->GetWindowWidth())
+            if ((*it)->GetPosition().GetX() <= TheCamera::CameraInstance()->GetPosition().x + 
+                TheWindow::WindowInstance()->GetWindowWidth())
             {
                 (*it)->SetUpdating(true);
                 (*it)->Update();
@@ -50,8 +52,7 @@ void ObjectLayer::Update(Level* level_)
             }
 
             // Check if dead or off screen
-            if ((*it)->GetPosition().GetX() < (0 - (*it)->GetWidth()) || (*it)->GetPosition().GetY() > 
-                (TheWindow::WindowInstance()->GetWindowHeight()) || ((*it)->IsDead()))
+            if ((*it)->IsDead() || (*it)->GetPosition().y > TheWindow::WindowInstance()->GetWindowHeight())
             {
                 delete* it;
                 it = gameObjects.erase(it); // Erase from vector and get new iterator
@@ -67,13 +68,10 @@ void ObjectLayer::Update(Level* level_)
 
 void ObjectLayer::Render()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		if (gameObjects[i]->GetPosition().GetX() <= TheWindow::WindowInstance()->GetWindowWidth())
-		{
-			gameObjects[i]->Draw();
-		}
-	}
+    for (int i = 0; i < gameObjects.size(); i++)
+    {
+        gameObjects[i]->Draw();
+    }
 }
 
 vector<GameObject*>* ObjectLayer::GetGameObjects()

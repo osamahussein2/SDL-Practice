@@ -2,20 +2,31 @@
 #include "Window.h"
 #include "InputHandler.h"
 #include "TileLayer.h"
-#include "BulletHandler.h"
+#include "Camera.h"
 #include "SoundManager.h"
+#include "TextureManager.h"
 
 typedef InputHandler TheInputHandler;
 
-Player::Player() : ShooterObject(), invulnerable(false), invulnerableTime(200), invulnerableCounter(0)
+Player::Player() : PlatformerObject(), invulnerable(false), invulnerableTime(200), invulnerableCounter(0), 
+pressedJump(false)
 {
-
+	jumpHeight = 80;
 }
 
 void Player::Collision()
 {
+	if (!isDying && !invulnerable)
+	{
+		currentFrame = 0;
+		currentRow = 4;
+		numberOfFrames = 9;
+		width = 50;
+		isDying = true;
+	}
+
 	// if the player is not invulnerable then set to dying and change values for death animation tile sheet
-	if (!invulnerable && !TheWindow::WindowInstance()->GetLevelComplete())
+	/*if (!invulnerable && !TheWindow::WindowInstance()->GetLevelComplete())
 	{
 		textureID = "largeexplosion";
 		currentFrame = 0;
@@ -23,12 +34,12 @@ void Player::Collision()
 		width = 60;
 		height = 60;
 		isDying = true;
-	}
+	}*/
 }
 
 void Player::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
 {
-	ShooterObject::LoadGameObject(move(loaderParams_));
+	PlatformerObject::LoadGameObject(move(loaderParams_));
 
 	// set up bullets
 	bulletFiringSpeed = 13;
@@ -39,13 +50,32 @@ void Player::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
 
 	// time it takes for death explosion
 	dyingTime = 100;
+
+	TheCamera::CameraInstance()->SetTarget(&position);
 }
 
 void Player::Draw()
 {
 	/* The :: operator is called the scope resolution operator and it is used to identify the specific place that some
 	data or function resides */
-	ShooterObject::Draw();
+	//PlatformerObject::Draw();
+
+	if (flipped)
+	{
+		TheTextureManager::TextureManagerInstance()->DrawFrame(textureID, 
+			(Uint32)position.GetX() - TheCamera::CameraInstance()->GetPosition().x, 
+			(Uint32)position.GetY() - TheCamera::CameraInstance()->GetPosition().y,
+			width, height, currentRow, currentFrame, TheWindow::WindowInstance()->GetRenderer(), angle, alpha, 
+			SDL_FLIP_HORIZONTAL);
+	}
+	else
+	{
+		TheTextureManager::TextureManagerInstance()->DrawFrame(textureID, 
+			position.GetX() - TheCamera::CameraInstance()->GetPosition().x,
+			position.GetY() - TheCamera::CameraInstance()->GetPosition().y,
+			width, height, currentRow, currentFrame, TheWindow::WindowInstance()->GetRenderer(), angle, alpha,
+			SDL_FLIP_NONE);
+	}
 }
 
 void Player::Update()
@@ -53,9 +83,9 @@ void Player::Update()
 	// A derived class can override the functionality of a parent class
 
 	// If the level is complete, then fly off the screen
-	if (TheWindow::WindowInstance()->GetLevelComplete())
+	/*if (TheWindow::WindowInstance()->GetLevelComplete())
 	{
-		/* Once a level is complete and the player has flown offscreen, increment the current level */
+		// Once a level is complete and the player has flown offscreen, increment the current level
 		if (position.GetX() >= TheWindow::WindowInstance()->GetWindowWidth())
 		{
 			TheWindow::WindowInstance()->SetCurrentLevel(TheWindow::WindowInstance()->GetCurrentLevel() + 1);
@@ -65,53 +95,115 @@ void Player::Update()
 		{
 			velocity.SetX(3);
 			velocity.SetY(0);
-			ShooterObject::Update();
+			PlatformerObject::Update();
 			HandleAnimation();
 		}
-	}
-
-	else
+	}*/
+	
+	// If the player isn't doing the death animation, then update it normally
+	if (!isDying)
 	{
-		// If the player isn't doing the death animation, then update it normally
-		if (!isDying)
+		// Reset velocity
+		/*velocity.SetX(0);
+		velocity.SetY(0);
+
+		// Get input
+		HandleInput();
+
+		// Do normal position += velocity update
+		PlatformerObject::Update();
+
+		// Update the animation
+		HandleAnimation();*/
+
+		// Fell off the edge
+
+		if (position.y + height >= 470)
 		{
-			// Reset velocity
-			velocity.SetX(0);
-			velocity.SetY(0);
-
-			// Get input
-			HandleInput();
-
-			// Do normal position += velocity update
-			ShooterObject::Update();
-
-			// Update the animation
-			HandleAnimation();
+			Collision();
 		}
 
-		// If the player is doing the death animation though
-		else
-		{
-			/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
-			the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
-			the amount of the animation frames in the sprite sheet */
-			currentFrame = static_cast<int>((SDL_GetTicks() / 100) % numberOfFrames);
+		// Get input from player
+		HandleInput();
 
-			// If the death animation has completed
-			if (dyingCounter == dyingTime)
+		if (moveLeft)
+		{
+			if (isRunning)
 			{
-				// Ressurect the player
-				Ressurect();
+				velocity.x = -5;
 			}
 
-			dyingCounter++;
+			else
+			{
+				velocity.x = -2;
+			}
 		}
+
+		else if (moveRight)
+		{
+			if (isRunning)
+			{
+				velocity.x = 5;
+			}
+
+			else
+			{
+				velocity.x = 2;
+			}
+		}
+
+		else
+		{
+			velocity.x = 0;
+		}
+
+		// If we are higher than the jump height set jumping to false
+		if (position.y < lastSafePosition.y - jumpHeight)
+		{
+			isJumping = false;
+		}
+
+		if (!isJumping)
+		{
+			velocity.y = 5;
+		}
+
+		else
+		{
+			velocity.y = -5;
+		}
+
+		HandleMovement(velocity);
 	}
+	
+	// If the player is doing the death animation though
+	else
+	{
+		/* SDL_GetTicks gets the amount of time in milliseconds since SDL was initialized. Then, I divided it by
+		the amount of frames I want the animation to update and used the modulo (%) operator to keep it in range of
+		the amount of the animation frames in the sprite sheet */
+		//currentFrame = static_cast<int>((SDL_GetTicks() / 100) % numberOfFrames);
+
+		velocity.x = 0;
+
+		// If the death animation has completed
+		if (dyingCounter == dyingTime)
+		{
+			// Ressurect the player
+			Ressurect();
+		}
+
+		dyingCounter++;
+
+		velocity.y = 5;
+	}
+
+	HandleAnimation();
 }
 
 void Player::Clean()
 {
-	ShooterObject::Clean();
+	PlatformerObject::Clean();
 }
 
 void Player::Ressurect()
@@ -122,7 +214,17 @@ void Player::Ressurect()
 
 	TheWindow::WindowInstance()->SetPlayerLives(TheWindow::WindowInstance()->GetPlayerLives() - 1);
 
-	position.SetX(10);
+	position = lastSafePosition;
+	isDying = false;
+
+	currentFrame = 0;
+	currentRow = 0;
+	width = 40;
+
+	dyingCounter = 0;
+	invulnerable = true;
+
+	/*position.SetX(10);
 	position.SetY(200);
 
 	isDying = false;
@@ -135,12 +237,67 @@ void Player::Ressurect()
 	height = 46;
 
 	dyingCounter = 0;
-	invulnerable = true;
+	invulnerable = true;*/
 }
 
 void Player::HandleInput()
 {
-	if (!isDead)
+	if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_RIGHT) && position.x < 
+		((*collisionLayers->begin())->GetMapWidth() * 32))
+	{
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_A))
+		{
+			isRunning = true;
+		}
+		else
+		{
+			isRunning = false;
+		}
+
+		moveRight = true;
+		moveLeft = false;
+	}
+
+	else if (TheInputHandler::InputHandlerInstance() ->IsKeyDown(SDL_SCANCODE_LEFT) && position.x > 32)
+	{
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_A))
+		{
+			isRunning = true;
+		}
+
+		else
+		{
+			isRunning = false;
+		}
+
+		moveRight = false;
+		moveLeft = true;
+	}
+
+	else
+	{
+		moveRight = false;
+		moveLeft = false;
+	}
+
+	if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_SPACE) && canJump && !pressedJump)
+	{
+		TheSoundManager::Instance()->playSound("jump", 0);
+		if (!pressedJump)
+		{
+			isJumping = true;
+			canJump = false;
+			lastSafePosition = position;
+			pressedJump = true;
+		}
+	}
+
+	if (!TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_SPACE) && canJump)
+	{
+		pressedJump = false;
+	}
+
+	/*if (!isDead)
 	{
 		// handle keys
 		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_UP) && position.GetY() > 0)
@@ -180,7 +337,7 @@ void Player::HandleInput()
 		{
 			bulletCounter = bulletFiringSpeed;
 		}
-	}
+	}*/
 
 	/*Vector2* target = TheInputHandler::InputHandlerInstance()->GetMousePosition();
 
@@ -299,7 +456,7 @@ void Player::HandleAnimation()
 	}
 
 	// If the player isn't dead, then we can change the angle with the velocity to give the impression of a moving helicopter
-	if (!isDead)
+	/*if (!isDead)
 	{
 		if (velocity.GetX() < 0)
 		{
@@ -315,8 +472,123 @@ void Player::HandleAnimation()
 		{
 			angle = 0.0;
 		}
+	}*/
+
+	// iI the player is not dead then we can change the angle with the velocity
+	if (!isDead && !isDying)
+	{
+		if (velocity.y < 0)
+		{
+			currentFrame = 2;
+			currentRow = 2;
+			numberOfFrames = 2;
+		}
+
+		else if (velocity.y > 0)
+		{
+			currentRow = 3;
+			numberOfFrames = 1;
+		}
+
+		else
+		{
+			if (velocity.GetX() < 0)
+			{
+				currentRow = 1;
+				numberOfFrames = 4;
+				flipped = true;
+			}
+
+			else if (velocity.GetX() > 0)
+			{
+				currentRow = 1;
+				numberOfFrames = 4;
+				flipped = false;
+			}
+
+			else
+			{
+				currentRow = 0;
+				numberOfFrames = 1;
+			}
+		}
+
+		if (isRunning)
+		{
+			currentFrame = int(((SDL_GetTicks() / (100)) % numberOfFrames));
+		}
+		else
+		{
+			currentFrame = int(((SDL_GetTicks() / (120)) % numberOfFrames));
+		}
+
+	}
+	else
+	{
+		currentFrame = dyingCounter / numberOfFrames;
 	}
 
 	// Set the current frame to animate the helicopter propellors
-	currentFrame = int(((SDL_GetTicks() / (100)) % numberOfFrames));
+	//currentFrame = int(((SDL_GetTicks() / (100)) % numberOfFrames));
+}
+
+void Player::HandleMovement(Vector2 velocity_)
+{
+	// Get the current position
+	Vector2 newPos = position;
+
+	// Add velocity to the x position
+	newPos.x = position.x + velocity.x;
+
+	// Check if the new x position would collide with a tile
+	if (!CheckCollideTile(newPos))
+	{
+		// No collision, add to the actual x position
+		position.x = newPos.x;
+	}
+
+	else
+	{
+		// Otherwise, there is collision and stop x movement
+		velocity.y = 0;
+	}
+
+	// Get the current position after x movement
+	newPos = position;
+
+	// Add velocity to y position
+	newPos.y += velocity.y;
+
+	// Check if new y position would collide with a tile
+	if (!CheckCollideTile(newPos))
+	{
+		// No collision, add to the actual x position
+		position.y = newPos.y;
+	}
+
+	else
+	{
+		// collision, stop y movement
+		velocity.y = 0;
+
+		// We collided with the map which means we are safe on the ground and make this the last safe position
+		lastSafePosition = position;
+
+		// Move the safe pos slightly back or forward so when resurrected we are safely on the ground after a fall
+		if (velocity.x > 0)
+		{
+			lastSafePosition.x -= 32;
+		}
+
+		else if (velocity.x < 0)
+		{
+			lastSafePosition.x += 32;
+		}
+
+		// allow the player to jump again
+		canJump = true;
+
+		// jumping is now false
+		isJumping = false;
+	}
 }

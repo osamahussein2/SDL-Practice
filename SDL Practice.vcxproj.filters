@@ -36,7 +36,7 @@
     <ClCompile Include="LoaderParams.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShooterObject.cpp">
+    <ClCompile Include="PlatformerObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vector2.cpp">
@@ -111,6 +111,9 @@
     <ClCompile Include="CollisionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -131,7 +134,7 @@
     <ClInclude Include="LoaderParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShooterObject.h">
+    <ClInclude Include="PlatformerObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector2.h">
@@ -230,12 +233,21 @@
     <ClInclude Include="Turret.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Snail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="test.xml">
       <Filter>Resource Files</Filter>
     </Xml>
     <Xml Include="Attack.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="Conan.xml">
       <Filter>Resource Files</Filter>
     </Xml>
   </ItemGroup>

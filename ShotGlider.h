@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Glider.h"
+/*#include "Glider.h"
 
 class ShotGlider : public Glider
 {
@@ -15,7 +15,7 @@ public:
 
 	virtual void LoadGameObject(std::unique_ptr<LoaderParams> const& loaderParams_)
 	{
-		ShooterObject::LoadGameObject(std::move(loaderParams_));
+		PlatformerObject::LoadGameObject(std::move(loaderParams_));
 
 		velocity.SetX(-moveSpeed);
 	}
@@ -39,7 +39,7 @@ public:
             DoDyingAnimation();
         }
 
-        ShooterObject::Update();
+        PlatformerObject::Update();
     }
 };
 
@@ -49,4 +49,4 @@ class ShotGliderCreator : public BaseCreator
 	{
 		return new ShotGlider();
 	}
-};
+};*/

@@ -150,6 +150,7 @@
     <ClCompile Include="AnimatedGraphic.cpp" />
     <ClCompile Include="base64.cpp" />
     <ClCompile Include="BulletHandler.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -168,7 +169,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="ScrollingBackground.cpp" />
-    <ClCompile Include="ShooterObject.cpp" />
+    <ClCompile Include="PlatformerObject.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StateParser.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="base64.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletHandler.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Enemy.h" />
@@ -211,8 +213,9 @@
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="RoofTurret.h" />
     <ClInclude Include="ScrollingBackground.h" />
-    <ClInclude Include="ShooterObject.h" />
+    <ClInclude Include="PlatformerObject.h" />
     <ClInclude Include="ShotGlider.h" />
+    <ClInclude Include="Snail.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StateParser.h" />
     <ClInclude Include="TextureManager.h" />
@@ -223,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Attack.xml" />
+    <Xml Include="Conan.xml" />
     <Xml Include="test.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

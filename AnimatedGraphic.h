@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ShooterObject.h"
+#include "PlatformerObject.h"
 #include "InputHandler.h"
 #include "GameObjectFactory.h"
 
-class AnimatedGraphic : public ShooterObject
+class AnimatedGraphic : public PlatformerObject
 {
 public:
 	AnimatedGraphic();

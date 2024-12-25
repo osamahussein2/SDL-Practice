@@ -1,4 +1,4 @@
-#include "BulletHandler.h"
+/*#include "BulletHandler.h"
 #include "Window.h"
 
 BulletHandler* BulletHandler::bulletHandlerInstance = 0;
@@ -88,3 +88,4 @@ void BulletHandler::ClearBullets()
 	enemyBullets.clear();
 	playerBullets.clear();
 }
+*/

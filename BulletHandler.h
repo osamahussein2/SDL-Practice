@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+/*#include <iostream>
 #include <vector>
 #include "Bullet.h"
 
@@ -44,4 +44,4 @@ private:
 	vector<EnemyBullet*> enemyBullets;
 };
 
-typedef BulletHandler TheBulletHandler;
+typedef BulletHandler TheBulletHandler;*/

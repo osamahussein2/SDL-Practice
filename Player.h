@@ -2,10 +2,10 @@
 
 #include <iostream>
 #include <vector>
-#include "ShooterObject.h"
+#include "PlatformerObject.h"
 #include "GameObjectFactory.h"
 
-class Player : public ShooterObject
+class Player : public PlatformerObject
 {
 public:
 	Player();
@@ -32,8 +32,12 @@ private:
 	// Handle any animation for the player
 	void HandleAnimation();
 
+	void HandleMovement(Vector2 velocity_);
+
 	// Player can be invulnerable for a time
 	int invulnerable, invulnerableTime, invulnerableCounter;
+
+	bool pressedJump;
 };
 
 class PlayerCreator : public BaseCreator

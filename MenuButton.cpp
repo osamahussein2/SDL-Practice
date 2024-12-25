@@ -2,7 +2,7 @@
 
 typedef InputHandler TheInputHandler;
 
-MenuButton::MenuButton() : ShooterObject(), callbackFunction(0), released(true)
+MenuButton::MenuButton() : PlatformerObject(), callbackFunction(0), released(true)
 {
 	// Start at frame 0
 	currentFrame = MOUSE_OUT;
@@ -10,7 +10,7 @@ MenuButton::MenuButton() : ShooterObject(), callbackFunction(0), released(true)
 
 void MenuButton::Draw()
 {
-	ShooterObject::Draw();
+	PlatformerObject::Draw();
 }
 
 void MenuButton::Update()
@@ -58,12 +58,12 @@ void MenuButton::Update()
 
 void MenuButton::Clean()
 {
-	ShooterObject::Clean();
+	PlatformerObject::Clean();
 }
 
 void MenuButton::LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_)
 {
-	ShooterObject::LoadGameObject(loaderParams_);
+	PlatformerObject::LoadGameObject(loaderParams_);
 
 	callbackID = loaderParams_->GetCallbackID();
 	currentFrame = MOUSE_OUT;

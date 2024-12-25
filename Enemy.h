@@ -1,15 +1,17 @@
 #pragma once
 
-#include "ShooterObject.h"
-#include "GameObjectFactory.h"
+#include <iostream>
+#include "PlatformerObject.h"
 
-class Enemy : public ShooterObject
+using namespace std;
+
+class Enemy : public PlatformerObject
 {
 public:
 	virtual string Type() { return "Enemy"; }
 
 protected:
-	Enemy() : ShooterObject() {}
+	Enemy() : PlatformerObject() {}
 	virtual ~Enemy() {}
 
 	int health;

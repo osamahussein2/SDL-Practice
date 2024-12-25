@@ -3,22 +3,24 @@
 #include <SDL.h>
 #include "GameObject.h"
 
-class ShooterObject : public GameObject
+class PlatformerObject : public GameObject
 {
 public:
-	virtual ~ShooterObject() {}
+	virtual ~PlatformerObject() {}
 
 	virtual void Draw();
 	virtual void Update();
 	virtual void Clean() {}
 
 	virtual void Collision() {}
-	virtual string Type() { return "ShooterObject"; }
+	virtual string Type() { return "PlatformerObject"; }
 
 	virtual void LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_);
 
 protected:
-	ShooterObject();
+	PlatformerObject();
+
+	bool CheckCollideTile(Vector2 newPos_);
 
 	// Draw the animation for the object about to be destroyed
 	void DoDyingAnimation();
@@ -34,4 +36,16 @@ protected:
 
 	// Has the explosion sound played yet?
 	bool playedDeathSound;
+
+	bool flipped;
+
+	bool moveLeft;
+	bool moveRight;
+	bool isRunning;
+	bool isFalling;
+	bool isJumping;
+	bool canJump;
+
+	Vector2 lastSafePosition;
+	int jumpHeight;
 };

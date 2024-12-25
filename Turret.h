@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+/*#include <iostream>
 #include "GameObjectFactory.h"
 #include "BulletHandler.h"
 #include "SoundManager.h"
@@ -49,7 +49,7 @@ public:
 
             if (bulletCounter == bulletFiringSpeed)
             {
-                TheBulletHandler::Instance()->AddEnemyBullet(position.GetX(), position.GetY(), 16, 16, 
+                TheBulletHandler::Instance()->AddEnemyBullet(position.GetX(), position.GetY(), 16, 16,
                     "bullet2", 1, Vector2(-3, -3));
                 TheBulletHandler::Instance()->AddEnemyBullet(position.GetX() + 20, position.GetY(), 16, 16, 
                     "bullet2", 1, Vector2(0, -3));
@@ -75,4 +75,4 @@ class TurretCreator : public BaseCreator
 	{
 		return new Turret();
 	}
-};
+};*/

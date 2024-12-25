@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Enemy.h"
+/*#include "Enemy.h"
 #include "SoundManager.h"
 #include "Window.h"
 #include "BulletHandler.h"
@@ -65,7 +65,7 @@ public:
             DoDyingAnimation();
         }
 
-        ShooterObject::Update();
+        PlatformerObject::Update();
     }
 };
 
@@ -75,4 +75,4 @@ class EskeletorCreator : public BaseCreator
     {
         return new Eskeletor();
     }
-};
+};*/

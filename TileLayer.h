@@ -11,7 +11,7 @@ using namespace std;
 class TileLayer : public Layer
 {
 public:
-	TileLayer(int tileSize_, const vector<Tileset>& tilesets_);
+	TileLayer(int tileSize_, int mapWidth_, int mapHeight_, const vector<Tileset>& tilesets_);
 
 	virtual ~TileLayer() {}
 
@@ -21,6 +21,7 @@ public:
 	const vector<vector<int>>& GetTileIDs();
 	void SetTileIDs(const vector<vector<int>>& data_);
 
+	int GetMapWidth();
 	void SetMapWidth(int mapWidth_);
 
 	int GetTileSize();

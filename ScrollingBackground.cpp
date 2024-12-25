@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "TextureManager.h"
 
-ScrollingBackground::ScrollingBackground() : ShooterObject()
+ScrollingBackground::ScrollingBackground() : PlatformerObject()
 {
 
 }
@@ -62,7 +62,7 @@ void ScrollingBackground::Update()
 
 void ScrollingBackground::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
 {
-	ShooterObject::LoadGameObject(move(loaderParams_));
+	PlatformerObject::LoadGameObject(move(loaderParams_));
 	scrollSpeed = loaderParams_->GetAnimationSpeed();
 
 	scrollSpeed = 1;

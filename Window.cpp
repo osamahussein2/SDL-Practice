@@ -7,14 +7,15 @@
 #include "GameOverState.h"
 #include "MenuButton.h"
 #include "ScrollingBackground.h"
-#include "Eskeletor.h"
+//#include "Eskeletor.h"
 #include "AnimatedGraphic.h"
 #include "SoundManager.h"
-#include "Glider.h"
-#include "Level1Boss.h"
-#include "RoofTurret.h"
-#include "ShotGlider.h"
-#include "Turret.h"
+#include "Snail.h"
+//#include "Glider.h"
+//#include "Level1Boss.h"
+//#include "RoofTurret.h"
+//#include "ShotGlider.h"
+//#include "Turret.h"
 
 typedef GameObjectFactory TheGameObjectFactory;
 
@@ -106,7 +107,7 @@ Window::Window()
 	changingState = false;
 
 	levelFiles.push_back("Sprites/Map1.tmx");
-	levelFiles.push_back("Sprites/Map2.tmx");
+	//levelFiles.push_back("Sprites/Map2.tmx");
 
 	currentLevel = 1; // Start at the first level
 }
@@ -172,9 +173,12 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				// Make the SDL window red
 				SDL_SetRenderDrawColor(gameRenderer, 0, 200, 255, 255);
 
-				TheSoundManager::Instance()->LoadAudio("Audio/DST_ElectroRock.ogg", "music1", SOUND_MUSIC);
-				TheSoundManager::Instance()->LoadAudio("Audio/Boom.wav", "explode", SOUND_SFX);
-				TheSoundManager::Instance()->LoadAudio("Audio/phaser.wav", "shoot", SOUND_SFX);
+				//TheSoundManager::Instance()->LoadAudio("Audio/DST_ElectroRock.ogg", "music1", SOUND_MUSIC);
+				//TheSoundManager::Instance()->LoadAudio("Audio/Boom.wav", "explode", SOUND_SFX);
+				//TheSoundManager::Instance()->LoadAudio("Audio/phaser.wav", "shoot", SOUND_SFX);
+
+				TheSoundManager::Instance()->LoadAudio("Audio/DST-Away.ogg", "music1", SOUND_MUSIC);
+				TheSoundManager::Instance()->LoadAudio("Audio/Jump.wav", "jump", SOUND_SFX);
 
 				TheSoundManager::Instance()->PlayMusic("music1", -1);
 
@@ -184,12 +188,14 @@ bool Window::InitializeSDL(const char* title, int x, int y, int width, int heigh
 				TheGameObjectFactory::Instance()->RegisterType("Player", new PlayerCreator());
 				TheGameObjectFactory::Instance()->RegisterType("AnimatedGraphic", new AnimatedGraphicCreator());
 				TheGameObjectFactory::Instance()->RegisterType("ScrollingBackground", new ScrollingBackgroundCreator());
-				TheGameObjectFactory::Instance()->RegisterType("Turret", new TurretCreator());
+				TheGameObjectFactory::Instance()->RegisterType("Snail", new SnailCreator());
+
+				/*TheGameObjectFactory::Instance()->RegisterType("Turret", new TurretCreator());
 				TheGameObjectFactory::Instance()->RegisterType("Glider", new GliderCreator());
 				TheGameObjectFactory::Instance()->RegisterType("ShotGlider", new ShotGliderCreator());
 				TheGameObjectFactory::Instance()->RegisterType("RoofTurret", new RoofTurretCreator());
 				TheGameObjectFactory::Instance()->RegisterType("Eskeletor", new EskeletorCreator());
-				TheGameObjectFactory::Instance()->RegisterType("Level1Boss", new Level1BossCreator());
+				TheGameObjectFactory::Instance()->RegisterType("Level1Boss", new Level1BossCreator());*/
 
 				//TheGameObjectFactory::Instance()->RegisterType("Enemy", new EnemyCreator());
 

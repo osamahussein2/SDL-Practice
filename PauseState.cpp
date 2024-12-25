@@ -34,7 +34,7 @@ bool PauseState::OnEnter()
 	StateParser stateParser;
 
 	// Parse the current state along with the XML file
-	stateParser.ParseState("Attack.xml", pauseID, &gameObjects, &textureIDList);
+	stateParser.ParseState("Conan.xml", pauseID, &gameObjects, &textureIDList);
 
 	// Push callbacks into the array inherited from MenuState
 

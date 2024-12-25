@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Enemy.h"
+/*#include "Enemy.h"
 #include "Window.h"
 
 typedef Window TheWindow;
@@ -22,7 +22,7 @@ public:
 
     virtual void LoadGameObject(std::unique_ptr<LoaderParams> const& loaderParams_)
     {
-        ShooterObject::LoadGameObject(std::move(loaderParams_));
+        PlatformerObject::LoadGameObject(std::move(loaderParams_));
 
         velocity.SetY(-moveSpeed);
     }
@@ -94,7 +94,7 @@ public:
 
                 bulletCounter++;
 
-                ShooterObject::Update();
+                PlatformerObject::Update();
             }
 
             else
@@ -123,4 +123,4 @@ class Level1BossCreator : public BaseCreator
     {
         return new Level1Boss();
     }
-};
+};*/

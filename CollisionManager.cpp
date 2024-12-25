@@ -5,7 +5,7 @@
 #include "BulletHandler.h"
 #include "TileLayer.h"
 
-void CollisionManager::CheckPlayerEnemyBulletCollision(Player* player_)
+/*void CollisionManager::CheckPlayerEnemyBulletCollision(Player* player_)
 {
 	SDL_Rect* pRect1 = new SDL_Rect();
 	pRect1->x = player_->GetPosition().GetX();
@@ -37,7 +37,7 @@ void CollisionManager::CheckPlayerEnemyBulletCollision(Player* player_)
 	}
 
 	delete pRect1;
-}
+}*/
 
 void CollisionManager::CheckPlayerEnemyCollision(Player* player_, const vector<GameObject*>& objects_)
 {
@@ -74,7 +74,7 @@ void CollisionManager::CheckPlayerEnemyCollision(Player* player_, const vector<G
 	delete pRect1;
 }
 
-void CollisionManager::CheckEnemyPlayerBulletCollision(const vector<GameObject*>& objects_)
+/*void CollisionManager::CheckEnemyPlayerBulletCollision(const vector<GameObject*>& objects_)
 {
 	for (int i = 0; i < objects_.size(); i++)
 	{
@@ -157,4 +157,4 @@ void CollisionManager::CheckPlayerTileCollision(Player* player_, const vector<Ti
 			player_->Collision();
 		}
 	}
-}
+}*/

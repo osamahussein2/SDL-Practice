@@ -1,17 +1,20 @@
 #include "TileLayer.h"
 #include "TextureManager.h"
 #include "Window.h"
+#include "Camera.h"
 
-TileLayer::TileLayer(int tileSize_, const vector<Tileset>& tilesets_) : tileSize(tileSize_), tilesets(tilesets_),
-position(0, 0), velocity(0, 0)
+TileLayer::TileLayer(int tileSize_, int mapWidth_, int mapHeight_, const vector<Tileset>& tilesets_) : tileSize(tileSize_), 
+tilesets(tilesets_), position(0, 0), velocity(0, 0)
 {
-	numberOfColumns = (TheWindow::WindowInstance()->GetWindowWidth() / tileSize) + 1;
-	numberOfRows = TheWindow::WindowInstance()->GetWindowHeight() / tileSize;
+	numberOfColumns = mapWidth_;
+	numberOfRows = mapHeight_;
+
+	mapWidth = mapWidth_;
 }
 
 void TileLayer::Update(Level* level_)
 {
-	if (position.GetX() < ((mapWidth * tileSize) - TheWindow::WindowInstance()->GetWindowWidth()) - tileSize)
+	/*if (position.GetX() < ((mapWidth * tileSize) - TheWindow::WindowInstance()->GetWindowWidth()) - tileSize)
 	{
 		velocity.SetX(TheWindow::WindowInstance()->GetScrollSpeed());
 		position += velocity;
@@ -20,7 +23,7 @@ void TileLayer::Update(Level* level_)
 	else
 	{
 		velocity.SetX(0);
-	}
+	}*/
 }
 
 void TileLayer::Render()
@@ -41,10 +44,18 @@ void TileLayer::Render()
 		for (int j = 0; j < numberOfColumns; j++)
 		{
 			// Get the current tile ID from the array
-			int ID = tileIDs[i][j + x];
+			int ID = tileIDs[i + y][j + x];
 
 			// Check if the tile ID is 0, and don't draw anything we don't want if that's the case
 			if (ID == 0)
+			{
+				continue;
+			}
+
+			// if outside the viewable area then skip the tile
+			if (((j * tileSize) - x2) - TheCamera::CameraInstance()->GetPosition().x < -tileSize || 
+				((j * tileSize) - x2) - TheCamera::CameraInstance()->GetPosition().x > 
+				TheWindow::WindowInstance()->GetWindowWidth())
 			{
 				continue;
 			}
@@ -61,10 +72,12 @@ void TileLayer::Render()
 			can set the current x position as the current column multiplied by the width of a tile and the y value as the
 			current row multiplied by the height of a tile. We then set the width and height of the tile we're copying
 			across. And finally, we work out the location of the tile on the tilesheet. */
+
+			// Draw the tile while offsetting its x position by subtracting the camera position
 			TheTextureManager::TextureManagerInstance()->DrawTile(tileset.name, tileset.margin, tileset.spacing, 
-				(j * tileSize) - x2, (i * tileSize) - y2, tileSize, tileSize, (ID - (tileset.firstGridID - 1)) / 
-				tileset.numberOfColumns, (ID - (tileset.firstGridID - 1)) % tileset.numberOfColumns, 
-				TheWindow::WindowInstance()->GetRenderer());
+				((j * tileSize) - x2) - TheCamera::CameraInstance()->GetPosition().x, ((i * tileSize) - y2), tileSize, 
+				tileSize, (ID - (tileset.firstGridID - 1)) / tileset.numberOfColumns, (ID - (tileset.firstGridID - 1)) % 
+				tileset.numberOfColumns, TheWindow::WindowInstance()->GetRenderer());
 		}
 	}
 }
@@ -77,6 +90,11 @@ const vector<vector<int>>& TileLayer::GetTileIDs()
 void TileLayer::SetTileIDs(const vector<vector<int>>& data_)
 {
 	tileIDs = data_;
+}
+
+int TileLayer::GetMapWidth()
+{
+	return mapWidth;
 }
 
 void TileLayer::SetMapWidth(int mapWidth_)

@@ -76,3 +76,5 @@ private:
 
 	static GameObjectFactory* gameObjectFactoryInstance;
 };
+
+typedef GameObjectFactory TheGameObjectFactory;

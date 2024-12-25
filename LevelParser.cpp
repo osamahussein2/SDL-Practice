@@ -180,6 +180,10 @@ void LevelParser::ParseObjectLayer(TiXmlElement* objectElement_, vector<Layer*>*
 			gameObject->LoadGameObject(unique_ptr<LoaderParams>(new LoaderParams(x, y, width, height, textureID,
 				numberOfFrames, callbackID, animationSpeed)));
 
+			// Set the collision layers
+			gameObject->SetCollisionLayers(level_->GetCollisionLayers());
+
+
 			if (type == "Player")
 			{
 				level_->SetPlayer(dynamic_cast<Player*>(gameObject));
@@ -196,7 +200,7 @@ void LevelParser::ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* lay
 	vector<TileLayer*>* collisionLayers_)
 {
 	// Create a new instance of TileLayer
-	TileLayer* tileLayer = new TileLayer(tileSize, *tilesets_);
+	TileLayer* tileLayer = new TileLayer(tileSize, width, height, *tilesets_);
 
 	// Local temporary variable
 	bool collidable = false;
