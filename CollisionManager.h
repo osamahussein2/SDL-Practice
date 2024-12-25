@@ -1,8 +1,13 @@
 #pragma once
 
-#include "Player.h"
-#include "GameObject.h"
-#include "TileLayer.h"
+#include <iostream>
+#include <vector>
+
+class Player;
+class GameObject;
+class TileLayer;
+
+using namespace std;
 
 class CollisionManager
 {

@@ -22,9 +22,7 @@ private:
 	void ParseTileLayer(TiXmlElement* tileElement_, vector<Layer*>* layers_, const vector<Tileset>* tilesets_,
 		vector<TileLayer*>* collisionLayers_);
 	void ParseTextures(TiXmlElement* textureRoot_);
-	void ParseObjectLayer(TiXmlElement* objectElement_, vector<Layer*>* layers_);
+	void ParseObjectLayer(TiXmlElement* objectElement_, vector<Layer*>* layers_, Level* level_);
 
 	int tileSize, width, height;
-
-	Level* level;
 };

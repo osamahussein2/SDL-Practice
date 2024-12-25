@@ -1,15 +1,18 @@
 #include "BulletHandler.h"
 #include "Window.h"
 
-typedef Window TheWindow;
-
 BulletHandler* BulletHandler::bulletHandlerInstance = 0;
+
+BulletHandler::BulletHandler()
+{
+
+}
 
 void BulletHandler::AddPlayerBullet(int x_, int y_, int width_, int height_, string textureID_, int numberOfFrames_, Vector2 heading_)
 {
 	PlayerBullet* playerBullet = new PlayerBullet();
 
-	playerBullet->LoadGameObject(unique_ptr<LoaderParams>(new LoaderParams(x_, y_, width_, height_, textureID_, 
+	playerBullet->LoadGameObject(unique_ptr<LoaderParams>(new LoaderParams(x_, y_, width_, height_, textureID_,
 		numberOfFrames_)), heading_);
 
 	playerBullets.push_back(playerBullet);
@@ -69,9 +72,9 @@ void BulletHandler::UpdateBullets()
 
 void BulletHandler::DrawBullets()
 {
-	for (int i = 0; i < playerBullets.size(); i++)
+	for (int p = 0; p < playerBullets.size(); p++)
 	{
-		playerBullets[i]->Draw();
+		playerBullets[p]->Draw();
 	}
 
 	for (int i = 0; i < enemyBullets.size(); i++)

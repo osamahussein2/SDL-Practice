@@ -3,8 +3,6 @@
 #include "Window.h"
 #include "GameObjectFactory.h"
 
-typedef TextureManager TheTextureManager;
-typedef Window TheWindow;
 typedef GameObjectFactory TheGameObjectFactory;
 
 bool StateParser::ParseState(const char* stateFile_, string stateID_, vector<GameObject*> *gameObjects_, 
@@ -32,6 +30,7 @@ bool StateParser::ParseState(const char* stateFile_, string stateID_, vector<Gam
 		if (element->Value() == stateID_)
 		{
 			stateRoot = element;
+			break;
 		}
 	}
 
@@ -44,6 +43,7 @@ bool StateParser::ParseState(const char* stateFile_, string stateID_, vector<Gam
 		if (element->Value() == string("TEXTURES"))
 		{
 			textureRoot = element;
+			break;
 		}
 	}
 
@@ -59,6 +59,7 @@ bool StateParser::ParseState(const char* stateFile_, string stateID_, vector<Gam
 		if (element->Value() == string("OBJECTS"))
 		{
 			objectRoot = element;
+			break;
 		}
 	}
 

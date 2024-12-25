@@ -75,16 +75,16 @@
     <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GameDev\zlib-1.3.1\lib32;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GameDev\SDL2_mixer-2.8.0\include;C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib32;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\GameDev\SDL2_mixer-2.8.0\include;C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GameDev\zlib-1.3.1\lib32;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GameDev\SDL2_mixer-2.8.0\include;C:\GameDev\zlib-1.3.1\include;C:\GameDev\SDL2_image-2.8.2\include;C:\GameDev\SDL2-2.30.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GameDev\SDL2_mixer-2.8.0\lib;C:\GameDev\zlib-1.3.1\lib32;C:\GameDev\SDL2_image-2.8.2\lib;C:\GameDev\SDL2-2.30.9\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,7 +96,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x86\SDL2.lib;x86\SDL2main.lib;x86\SDL2_image.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>x86\SDL2.lib;x86\SDL2main.lib;x86\SDL2_image.lib;zdll.lib;x86\SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,7 +113,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x86\SDL2.lib;x86\SDL2main.lib;x86\SDL2_image.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>x86\SDL2.lib;x86\SDL2main.lib;x86\SDL2_image.lib;zdll.lib;x86\SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -190,14 +190,17 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Eskeletor.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GameOverState.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateMachine.h" />
+    <ClInclude Include="Glider.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="Level1Boss.h" />
     <ClInclude Include="LevelParser.h" />
     <ClInclude Include="LoaderParams.h" />
     <ClInclude Include="MenuButton.h" />
@@ -206,12 +209,15 @@
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayState.h" />
+    <ClInclude Include="RoofTurret.h" />
     <ClInclude Include="ScrollingBackground.h" />
     <ClInclude Include="ShooterObject.h" />
+    <ClInclude Include="ShotGlider.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StateParser.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TileLayer.h" />
+    <ClInclude Include="Turret.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

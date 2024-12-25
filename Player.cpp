@@ -6,11 +6,39 @@
 #include "SoundManager.h"
 
 typedef InputHandler TheInputHandler;
-typedef Window TheWindow;
 
-Player::Player() : ShooterObject()
+Player::Player() : ShooterObject(), invulnerable(false), invulnerableTime(200), invulnerableCounter(0)
 {
 
+}
+
+void Player::Collision()
+{
+	// if the player is not invulnerable then set to dying and change values for death animation tile sheet
+	if (!invulnerable && !TheWindow::WindowInstance()->GetLevelComplete())
+	{
+		textureID = "largeexplosion";
+		currentFrame = 0;
+		numberOfFrames = 9;
+		width = 60;
+		height = 60;
+		isDying = true;
+	}
+}
+
+void Player::LoadGameObject(unique_ptr<LoaderParams> const& loaderParams_)
+{
+	ShooterObject::LoadGameObject(move(loaderParams_));
+
+	// set up bullets
+	bulletFiringSpeed = 13;
+	moveSpeed = 3;
+
+	// we want to be able to fire instantly
+	bulletCounter = bulletFiringSpeed;
+
+	// time it takes for death explosion
+	dyingTime = 100;
 }
 
 void Player::Draw()
@@ -83,22 +111,7 @@ void Player::Update()
 
 void Player::Clean()
 {
-
-}
-
-void Player::LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_)
-{
-	ShooterObject::LoadGameObject(loaderParams_);
-
-	// set up bullets
-	bulletFiringSpeed = 13;
-	moveSpeed = 3;
-
-	// we want to be able to fire instantly
-	bulletCounter = bulletFiringSpeed;
-
-	// time it takes for death explosion
-	dyingTime = 100;
+	ShooterObject::Clean();
 }
 
 void Player::Ressurect()
@@ -127,11 +140,53 @@ void Player::Ressurect()
 
 void Player::HandleInput()
 {
-	Vector2* target = TheInputHandler::InputHandlerInstance()->GetMousePosition();
+	if (!isDead)
+	{
+		// handle keys
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_UP) && position.GetY() > 0)
+		{
+			velocity.SetY(-moveSpeed);
+		}
+		else if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_DOWN) && (position.GetY() + height) < 
+			TheWindow::WindowInstance()->GetWindowHeight() - 10)
+		{
+			velocity.SetY(moveSpeed);
+		}
+
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_LEFT) && position.GetX() > 0)
+		{
+			velocity.SetX(-moveSpeed);
+		}
+		else if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_RIGHT) && (position.GetX() + width) <
+			TheWindow::WindowInstance()->GetWindowWidth())
+		{
+			velocity.SetX(moveSpeed);
+		}
+
+		if (TheInputHandler::InputHandlerInstance()->IsKeyDown(SDL_SCANCODE_SPACE))
+		{
+			if (bulletCounter == bulletFiringSpeed)
+			{
+				TheSoundManager::Instance()->playSound("shoot", 0);
+				TheBulletHandler::Instance()->AddPlayerBullet(position.GetX() + 90, position.GetY() + 12, 11, 11,
+					"bullet1", 1, Vector2(10, 0));
+				bulletCounter = 0;
+			}
+
+			bulletCounter++;
+		}
+
+		else
+		{
+			bulletCounter = bulletFiringSpeed;
+		}
+	}
+
+	/*Vector2* target = TheInputHandler::InputHandlerInstance()->GetMousePosition();
 
 	velocity = *target - position;
 
-	velocity /= 50;
+	velocity /= 50;*/
 
 	/*if (TheInputHandler::InputHandlerInstance()->JoysticksInitialized())
 	{

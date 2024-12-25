@@ -6,9 +6,7 @@
 
 const string MainMenuState::menuID = "MENU";
 
-typedef TextureManager TheTextureManager;
 typedef InputHandler TheInputHandler;
-typedef Window TheWindow;
 
 void MainMenuState::Update()
 {

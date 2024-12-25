@@ -1,23 +1,16 @@
 #pragma once
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <Windows.h>
-
+#include <iostream>
 #include <string>
 #include <map>
+#include <SDL.h>
 
 using namespace std;
 
 // A singleton is a class that can only have one instance (meaning we can reuse this class throughout the game)
 class TextureManager
 {
-private:
-	TextureManager() : tempSurface(nullptr), texture(nullptr), textureLoaded(false), srcRectangle(SDL_Rect()),
-		destRectangle(SDL_Rect()) {};
-
 public:
-	~TextureManager();
 
 	static TextureManager* TextureManagerInstance();
 
@@ -35,6 +28,13 @@ public:
 
 private:
 
+	TextureManager() : tempSurface(nullptr), texture(nullptr), textureLoaded(false), srcRectangle(SDL_Rect()),
+		destRectangle(SDL_Rect()) {};
+	~TextureManager();
+
+	TextureManager(const TextureManager&);
+	TextureManager& operator=(const TextureManager&);
+
 	// Map of pointers to the SDL_Texture objects, keyed using strings
 	map<string, SDL_Texture*> textureMap;
 
@@ -48,3 +48,5 @@ private:
 
 	static TextureManager* textureManagerInstance;
 };
+
+typedef TextureManager TheTextureManager;

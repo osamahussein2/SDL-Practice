@@ -32,8 +32,8 @@ public:
 	const vector<EnemyBullet*> GetEnemyBullets() { return enemyBullets; }
 
 private:
-	BulletHandler() {}
-	~BulletHandler() {}
+	BulletHandler();
+	~BulletHandler();
 
 	BulletHandler(const BulletHandler&);
 	BulletHandler& operator=(const BulletHandler&);

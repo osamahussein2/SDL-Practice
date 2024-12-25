@@ -1,10 +1,12 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 
 #include "Layer.h"
-#include "GameObject.h"
 #include "CollisionManager.h"
+
+class GameObject;
 
 using namespace std;
 

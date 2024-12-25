@@ -20,7 +20,7 @@ public:
 
 	bool LoadAudio(string fileName_, string ID_, SoundType type_);
 
-	void PlaySound(string ID_, int loop_);
+	void playSound(string ID_, int loop_);
 	void PlayMusic(string ID_, int loop_);
 
 private:

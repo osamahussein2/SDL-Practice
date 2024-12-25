@@ -74,8 +74,6 @@ private:
 
 	int playerLives;
 
-	typedef TextureManager TheTextureManager;
-
 	vector<GameObject*> gameObjects;
 
 	static Window* windowInstance;
@@ -96,5 +94,7 @@ private:
 
 	bool changingState;
 };
+
+typedef Window TheWindow;
 
 #endif /* defined(WINDOW_H) */

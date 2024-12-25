@@ -66,7 +66,7 @@ bool SoundManager::LoadAudio(string fileName_, string ID_, SoundType type_)
 	return false;
 }
 
-void SoundManager::PlaySound(string ID_, int loop_)
+void SoundManager::playSound(string ID_, int loop_)
 {
 	/* Mix_PlayChannel takes an int value as the 1st parameter, which is the channel that the sound is to be played on. 
 	A value of -1 tells SDL_mixer to play the sound on any available channel. */

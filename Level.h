@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "CollisionManager.h"
 
-using namespace std;
+class TileLayer;
 
 // This struct holds information we need to know about tilesets
 struct Tileset
@@ -20,7 +20,7 @@ struct Tileset
 class Level
 {
 public:
-	~Level() {}
+	~Level();
 
 	void Update();
 	void Render();
@@ -31,8 +31,8 @@ public:
 
 	const vector<TileLayer*>& GetCollidableLayers();
 
-	Player* GetPlayer() { return player; }
-	void SetPlayer(Player* player_) { player = player_; }
+	Player* GetPlayer();
+	void SetPlayer(Player* player_);
 
 private:
 
@@ -41,9 +41,9 @@ private:
 	friend class LevelParser;
 	Level();
 
-	vector<Tileset> tilesets;
-	vector<Layer*> layers;
-	vector<TileLayer*> collisionLayers;
-
 	Player* player;
+
+	vector<Layer*> layers;
+	vector<Tileset> tilesets;
+	vector<TileLayer*> collisionLayers;
 };

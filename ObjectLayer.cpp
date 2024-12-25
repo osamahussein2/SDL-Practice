@@ -1,7 +1,8 @@
 #include "ObjectLayer.h"
+#include "GameObject.h"
+#include "Vector2.h"
 #include "Window.h"
-
-typedef Window TheWindow;
+#include "Level.h"
 
 ObjectLayer::~ObjectLayer()
 {
@@ -16,8 +17,8 @@ ObjectLayer::~ObjectLayer()
 void ObjectLayer::Update(Level* level_)
 {
     collisionManager.CheckPlayerEnemyBulletCollision(level_->GetPlayer());
-    collisionManager.CheckEnemyPlayerBulletCollision((const std::vector<GameObject*>&) gameObjects);
-    collisionManager.CheckPlayerEnemyCollision(level_->GetPlayer(), (const std::vector<GameObject*>&) gameObjects);
+    collisionManager.CheckEnemyPlayerBulletCollision((const vector<GameObject*>&) gameObjects);
+    collisionManager.CheckPlayerEnemyCollision(level_->GetPlayer(), (const vector<GameObject*>&) gameObjects);
 
     if (level_->GetPlayer()->GetPosition().GetX() + level_->GetPlayer()->GetWidth() < 
         TheWindow::WindowInstance()->GetWindowWidth())
@@ -37,7 +38,7 @@ void ObjectLayer::Update(Level* level_)
             }
             else
             {
-                if ((*it)->Type() != std::string("Player"))
+                if ((*it)->Type() != string("Player"))
                 {
                     (*it)->SetUpdating(false);
                     (*it)->Scroll(TheWindow::WindowInstance()->GetScrollSpeed());

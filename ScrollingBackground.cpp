@@ -2,9 +2,6 @@
 #include "Window.h"
 #include "TextureManager.h"
 
-typedef Window TheWindow;
-typedef TextureManager TheTextureManager;
-
 ScrollingBackground::ScrollingBackground() : ShooterObject()
 {
 

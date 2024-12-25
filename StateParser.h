@@ -11,6 +11,9 @@ using namespace std;
 class StateParser
 {
 public:
+	StateParser() {}
+	~StateParser() {}
+
 	bool ParseState(const char* stateFile_, string stateID_, vector<GameObject*> *gameObjects_, vector<string>* textureIDs_);
 
 private:

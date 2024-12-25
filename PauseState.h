@@ -1,9 +1,7 @@
 #pragma once
 
-#include "GameState.h"
-#include "GameObject.h"
-#include "TextureManager.h"
-#include "Window.h"
+#include <vector>
+#include <iostream>
 #include "MenuState.h"
 
 class GameObject;
@@ -11,6 +9,8 @@ class GameObject;
 class PauseState : public MenuState
 {
 public:
+	virtual ~PauseState() {}
+
 	virtual void Update();
 	virtual void Render();
 
@@ -19,11 +19,11 @@ public:
 
 	virtual string GetStateID() const;
 
+	virtual void SetCallbacks(const vector<Callback>& callbacks_);
+
 private:
 	static void PauseToMain();
 	static void ResumePlay();
-
-	virtual void SetCallbacks(const vector<Callback>& callbacks_);
 
 	static const string pauseID;
 

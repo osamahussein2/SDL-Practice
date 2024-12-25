@@ -4,10 +4,21 @@
 #include "Layer.h"
 #include "TileLayer.h"
 #include <math.h>
+#include <iostream>
 
 Level::Level()
 {
 
+}
+
+Level::~Level()
+{
+	for (int i = 0; i < layers.size(); i++)
+	{
+		delete layers[i];
+	}
+
+	layers.clear();
 }
 
 void Level::Update()
@@ -44,4 +55,14 @@ vector<TileLayer*>* Level::GetCollisionLayers()
 const vector<TileLayer*>& Level::GetCollidableLayers()
 {
 	return collisionLayers;
+}
+
+Player* Level::GetPlayer()
+{
+	return player;
+}
+
+void Level::SetPlayer(Player* player_)
+{
+	player = player_;
 }

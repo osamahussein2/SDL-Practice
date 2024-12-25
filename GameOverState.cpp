@@ -6,8 +6,6 @@
 const string GameOverState::gameOverID = "GAMEOVER";
 
 typedef InputHandler TheInputHandler;
-typedef TextureManager TheTextureManager;
-typedef Window TheWindow;
 
 void GameOverState::Update()
 {
@@ -26,7 +24,7 @@ void GameOverState::Render()
 	{
 		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			gameObjects[i]->Update();
+			gameObjects[i]->Draw();
 		}
 	}
 }
@@ -55,9 +53,12 @@ bool GameOverState::OnEnter()
 
 bool GameOverState::OnExit()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Clean();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Clean();
+		}
 	}
 
 	gameObjects.clear();

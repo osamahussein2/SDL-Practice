@@ -6,8 +6,6 @@
 const string PauseState::pauseID = "PAUSE";
 
 typedef InputHandler TheInputHandler;
-typedef TextureManager TheTextureManager;
-typedef Window TheWindow;
 
 void PauseState::Update()
 {
@@ -55,9 +53,12 @@ bool PauseState::OnEnter()
 
 bool PauseState::OnExit()
 {
-	for (int i = 0; i < gameObjects.size(); i++)
+	if (loadingComplete && !gameObjects.empty())
 	{
-		gameObjects[i]->Clean();
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			gameObjects[i]->Clean();
+		}
 	}
 
 	gameObjects.clear();

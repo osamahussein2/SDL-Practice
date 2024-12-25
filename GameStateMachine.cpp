@@ -1,4 +1,5 @@
 #include "GameStateMachine.h"
+#include <iostream>
 
 void GameStateMachine::PushState(GameState* gameState_)
 {
@@ -20,19 +21,15 @@ void GameStateMachine::ChangeState(GameState* gameState_)
 		}
 
 		// Call OnExit of the current state if the state IDs don't match
-		if (gameStates.back()->OnExit())
-		{
-			// Remove the game state
-			delete gameStates.back();
-			gameStates.pop_back();
-		}
+		gameStates.back()->OnExit();
+		gameStates.pop_back();
 	}
+
+	// Initialize that new state
+	gameState_->OnEnter();
 
 	// Push back the newly passed in game state
 	gameStates.push_back(gameState_);
-
-	// Initialize that new state
-	gameStates.back()->OnEnter();
 }
 
 void GameStateMachine::PopState()
@@ -41,15 +38,11 @@ void GameStateMachine::PopState()
 	if (!gameStates.empty())
 	{
 		// Call OnExit of the current state
-		if (gameStates.back()->OnExit())
-		{
-			// Remove the game state
-			delete gameStates.back();
-			gameStates.pop_back();
-		}
-
-		gameStates.back()->Resume();
+		gameStates.back()->OnExit();
+		gameStates.pop_back();
 	}
+
+	gameStates.back()->Resume();
 }
 
 void GameStateMachine::Update()

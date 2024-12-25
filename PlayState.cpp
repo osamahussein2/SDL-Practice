@@ -11,8 +11,6 @@
 const string PlayState::playID = "PLAY";
 
 typedef InputHandler TheInputHandler;
-typedef TextureManager TheTextureManager;
-typedef Window TheWindow;
 
 void PlayState::Update()
 {
@@ -83,13 +81,13 @@ bool PlayState::OnEnter()
 	level = levelParser.ParseLevel(TheWindow::WindowInstance()->GetLevelFiles()
 		[TheWindow::WindowInstance()->GetCurrentLevel() - 1].c_str());
 
-	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet1.png", "bullet1", 
+	TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Bullet1.png", "bullet1", 
 		TheWindow::WindowInstance()->GetRenderer());
-	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet2.png", "bullet2", 
+	TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Bullet2.png", "bullet2", 
 		TheWindow::WindowInstance()->GetRenderer());
-	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/bullet3.png", "bullet3", 
+	TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Bullet3.png", "bullet3", 
 		TheWindow::WindowInstance()->GetRenderer());
-	TheTextureManager::TextureManagerInstance()->LoadTexture("assets/lives.png", "lives", 
+	TheTextureManager::TextureManagerInstance()->LoadTexture("Sprites/Lives.png", "lives", 
 		TheWindow::WindowInstance()->GetRenderer());
 
 	if (level != 0)

@@ -1,17 +1,18 @@
 #pragma once
 
-#include <iostream>
 #include "GameState.h"
-#include "ShooterObject.h"
-#include "TextureManager.h"
-#include "Level.h"
 #include "CollisionManager.h"
+#include "Level.h"
 
 class GameObject;
+class SDLGameObject;
+class Level;
 
 class PlayState : public GameState
 {
 public:
+	virtual ~PlayState() { delete level; }
+
 	virtual void Update();
 	virtual void Render();
 
@@ -23,9 +24,9 @@ public:
 private:
 	static const string playID;
 
-	vector<GameObject*> gameObjects;
-
 	CollisionManager collisionManager;
+
+	vector<GameObject*> gameObjects;
 
 	Level* level;
 };

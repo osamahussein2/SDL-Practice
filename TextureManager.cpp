@@ -1,4 +1,6 @@
 #include "TextureManager.h"
+#include <SDL.h>
+#include <SDL_image.h>
 
 TextureManager* TextureManager::textureManagerInstance = 0;
 

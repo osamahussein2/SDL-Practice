@@ -1,14 +1,11 @@
 #include "TileLayer.h"
-#include "Window.h"
 #include "TextureManager.h"
-
-typedef Window TheWindow;
-typedef TextureManager TheTextureManager;
+#include "Window.h"
 
 TileLayer::TileLayer(int tileSize_, const vector<Tileset>& tilesets_) : tileSize(tileSize_), tilesets(tilesets_),
 position(0, 0), velocity(0, 0)
 {
-	numberOfColumns = TheWindow::WindowInstance()->GetWindowWidth() / tileSize;
+	numberOfColumns = (TheWindow::WindowInstance()->GetWindowWidth() / tileSize) + 1;
 	numberOfRows = TheWindow::WindowInstance()->GetWindowHeight() / tileSize;
 }
 

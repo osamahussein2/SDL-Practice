@@ -1,6 +1,9 @@
 #include "CollisionManager.h"
-#include "BulletHandler.h"
 #include "Collision.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "BulletHandler.h"
+#include "TileLayer.h"
 
 void CollisionManager::CheckPlayerEnemyBulletCollision(Player* player_)
 {

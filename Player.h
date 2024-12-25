@@ -9,12 +9,17 @@ class Player : public ShooterObject
 {
 public:
 	Player();
+	virtual ~Player() {}
 
 	virtual void Draw();
 	virtual void Update();
 	virtual void Clean();
 
 	virtual void LoadGameObject(unique_ptr<LoaderParams> const &loaderParams_);
+
+	virtual void Collision();
+
+	virtual string Type() { return "Player"; }
 
 private:
 
